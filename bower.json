@@ -1,0 +1,32 @@
+{
+  "name": "composr-connector",
+  "version": "0.0.1",
+  "description": "A connector for Composr middleware",
+  "main": "composr-connector.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bquarks/composr-connector.git"
+  },
+  "keywords": [
+    "bq",
+    "bquarks",
+    "corbel",
+    "composr"
+  ],
+  "authors": [
+    "front-end bq <front-end@bq.com>"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "/.*"
+
+  ],
+  "dependencies": {
+    "es6-object-assign": "https://github.com/rubennorte/es6-object-assign.git#1.0.1",
+    "es6-promise": "~3.0.2",
+    "fetch": "0.11.0"
+  }
+}
