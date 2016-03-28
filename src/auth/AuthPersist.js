@@ -1,14 +1,16 @@
 class AuthPersist {
   constructor() {
-
+    this.getRememberFromStorage();
+    this.getTokensFromStorage();
   }
 
   /**
    * Stores result auth data in local & session storage
    *
-   * @param  {Object} data [accessTocken, refreshToken, remember]
+   * @param  {Object} data [accessToken, refreshToken, remember]
    */
   _persistAuthData(data) {
+    const { accessToken, refreshToken, expiresAt, deviceId } = data;
 
     if (this.remember) {
       this._addLocalStorage(data);
@@ -17,11 +19,17 @@ class AuthPersist {
     } else {
       // Not saving in localstorage if user doesnt check remember option
       // When browser is closed, user is logged out
-      // To save accesstoken in localstorage, uncomment this line
-      // this._addLocalStorage(data);
       this._addSessionStorage(data);
     }
-    this.fire('auth:userLogged');
+
+    this.tokens.user = {
+      accessToken,
+      refreshToken,
+      expiresAt
+    };
+
+    this.tokens.deviceId = deviceId;
+
     return true;
   }
 
@@ -84,22 +92,49 @@ class AuthPersist {
     window.sessionStorage.removeItem('deviceId');
   }
 
-  _removeUserCookie(cookieName) {
+  removeUserCookie(cookieName) {
     document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
 
-  _getMostRecentToken() {
-    var mostRecentToken = {};
+  /**
+   * Persist client accessToken
+   */
+  persistClientToken(data) {
+    let { accessToken, expiresAt } = data;
 
-    var sessionStorageToken = {
+    window.sessionStorage.setItem('clientAccessToken', accessToken);
+    window.sessionStorage.setItem('clientExpiresAt', expiresAt);
+
+    this.tokens.client = {
+      accessToken,
+      expiresAt
+    };
+  }
+
+  getRememberFromStorage() {
+    const remember = window.sessionStorage.getItem('remember') ||
+      window.localStorage.getItem('remember');
+    this.remember === 'true';
+  }
+
+  _getDeviceIdFromStorage() {
+    const deviceId = window.sessionStorage.getItem('deviceId') ||
+      window.localStorage.getItem('deviceId');
+    this.deviceId === 'true';
+  }
+
+  _getUserAccessToken() {
+    const sessionStorageToken = {
       accessToken: window.sessionStorage.getItem('accessToken'),
       expiresAt: parseInt(window.sessionStorage.getItem('expiresAt'))
     };
 
-    var localStorageToken = {
+    const localStorageToken = {
       accessToken: window.localStorage.getItem('accessToken'),
       expiresAt: parseInt(window.localStorage.getItem('expiresAt'))
     };
+
+    let mostRecentToken = {};
 
     if (!isNaN(sessionStorageToken.expiresAt) && !isNaN(localStorageToken.expiresAt)) {
       mostRecentToken = sessionStorageToken.expiresAt > localStorageToken.expiresAt ? sessionStorageToken : localStorageToken;
@@ -111,82 +146,35 @@ class AuthPersist {
     return mostRecentToken;
   }
 
-  /**
-   * Validates accesstoken and refresh it if necessary
-   */
-  _validateAccessToken() {
-    var that = this;
+  _getUserTokens() {
+    const refreshToken =  window.sessionStorage.getItem('refreshToken') ||
+      window.localStorage.getItem('refreshToken');
+    const { accessToken, expiresAt } = this._getUserAccessToken();
+    const userTokens = {
+      refreshToken,
+      accessToken,
+      expiresAt
+    };
 
-    var mostRecentAccessToken = this._getMostRecentToken();
-
-    var accessToken = mostRecentAccessToken.accessToken;
-
-    var expiresAt = mostRecentAccessToken.expiresAt;
-
-    var refreshToken = window.sessionStorage.getItem('refreshToken') || window.localStorage.getItem('refreshToken');
-
-    var accessTokenPromise = new Promise(function(resolve, reject) {
-      if (accessToken &&
-        expiresAt &&
-        Date.now() < expiresAt) {
-        // Accesstoken exists and is not expired
-        resolve({
-          accessToken: accessToken
-        });
-      } else if (refreshToken) {
-        // AccessToken expired or missed: refresh token if exists
-        that.refreshToken(page.current).then(function(data) {
-          resolve(data);
-        }).catch(function(err) {
-          reject(err);
-        });
-      } else {
-        reject({
-          err: 'No accessToken or refreshToken'
-        });
-      }
-
-    });
-
-    return accessTokenPromise;
+    return userTokens;
   }
 
-  /**
-   * Checks if remember is in localStorage
-   */
-  _validateRemember() {
-    var that = this;
-    var remember = window.sessionStorage.getItem('remember') ||
-      window.localStorage.getItem('remember');
+  _getClientAccessToken() {
+    let accessToken = window.sessionStorage.getItem('clientAccessToken', accessToken);;
+    let expiresAt = window.sessionStorage.getItem('clientExpiresAt', expiresAt);;
 
-    var rememberPromise = new Promise(function(resolve, reject) {
-      if (remember === 'true') {
-        that.remember = true;
-        that.refreshToken().then(function(data) {
-          resolve(data);
-        }).catch(function(err) {
-          reject(err);
-        });
-      } else {
-        reject('No Remember setted');
-      }
-
-    });
-
-    return rememberPromise;
+    return { accessToken, expiresAt };
   }
 
-  /**
-   * Persist client accessToken
-   */
-  _persistClientToken(data) {
+  getTokensFromStorage() {
+    let tokens = {
+      client: this._getClientAccessToken(),
+      user: this._getUserTokens(),
+      deviceId: this._getDeviceIdFromStorage()
+    };
+    this.tokens = tokens;
 
-    window.sessionStorage.setItem('clientAccessToken', data.accessToken);
-    window.sessionStorage.setItem('clientExpiresAt', data.expiresAt);
-  }
-
-  getClientAccessToken() {
-
+    return tokens;
   }
 }
 
