@@ -5,9 +5,6 @@ class AuthRequest {
     // Init auth variables
     this.authConfig = authConfig;
     this.endpoints = endpoints || authConfig.endpoints;
-
-    // auth init methods
-    this.authenticateClient();
   }
 
   /////////////////
@@ -87,24 +84,6 @@ class AuthRequest {
     return fetch(request).then(utils.checkStatus);
   }
 
-  /**
-   * Validates if clientAccessToken exists in sessionStorage and is not expired
-   *
-   * @return {String} clientAccessToken
-   */
-  _validateClientAccessToken(clientToken) {
-
-    if (clientToken &&
-      clientToken.accessToken &&
-      clientToken.expiresAt &&
-      Date.now() < parseInt(clientToken.expiresAt)) {
-      // Accesstoken exists and is not expired
-      return clientToken.accessToken;
-    }
-
-    return;
-  }
-
   ////////////////
   // Public API //
   ////////////////
@@ -116,26 +95,11 @@ class AuthRequest {
    * @return {Object} Promise
    */
   authenticateClient(storedClientToken) {
-    const clientAccessTokenPromise = new Promise((resolve, reject) => {
-      const currentClientAccessToken = this._validateClientAccessToken(storedClientToken);
-      const claims = this._createClaims({}, 'client');
+    const claims = this._createClaims({}, 'client');
 
-      // Resolve current clientToken if exists
-      if (currentClientAccessToken) {
-        resolve(currentClientAccessToken);
-        return;
-      }
+    this.clientAccessTokenPromise = this._authenticate('loginClient', claims);
 
-      // Ask for a new clientToken
-      this._authenticate('loginClient', claims)
-        .then(res => resolve(res))
-        .catch(err => reject(err));
-
-    });
-
-    this.clientAccessTokenPromise = clientAccessTokenPromise;
-
-    return clientAccessTokenPromise;
+    return this.clientAccessTokenPromise;
   }
 }
 
