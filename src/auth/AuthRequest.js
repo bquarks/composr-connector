@@ -101,6 +101,28 @@ class AuthRequest {
 
     return this.clientAccessTokenPromise;
   }
+
+  /**
+ * Sign in method
+ * Calls _authenticate() method with the inserted credentials
+ * @return {Object} A result promise
+ */
+  authenticateUser({email, password, remember, deviceId}) {
+      const authData = {
+        'basic_auth.username': email,
+        'basic_auth.password': password
+      };
+
+      const headers = {
+        Deviceid: deviceId
+      };
+
+      const claims = this._createClaims(authData, 'user');
+
+      this.userAccessTokenPromise = this._authenticate('login', claims, headers);
+
+      return this.userAccessTokenPromise;
+    }
 }
 
 export default AuthRequest;

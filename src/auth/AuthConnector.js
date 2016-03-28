@@ -1,5 +1,6 @@
 import AuthRequest from './AuthRequest';
 import AuthPersist from './AuthPersist';
+import * as utils from '../utils/utils';
 
 class AuthConnector {
   constructor(authConfig) {
@@ -34,7 +35,7 @@ class AuthConnector {
    *
    * @return {Object} Promise
    */
-  authenticateClient() {
+  loginClient() {
     this.authPersist.getTokensFromStorage();
     const storedClientToken = this.authPersist.tokens.client;
     const currentClientAccessToken = this._validateClientAccessToken(storedClientToken);
@@ -59,6 +60,25 @@ class AuthConnector {
     this.clientAccessTokenPromise = clientAccessTokenPromise;
 
     return clientAccessTokenPromise;
+  }
+
+    /**
+   * Sign in method
+   *
+   * @return {Object} A result promise
+   */
+  loginUser({email, password, remember}) {
+    const deviceId = 'Web-' + utils.generateUUID();
+    const request = this.authRequest.authenticateUser({email, password, remember, deviceId});
+
+    request.then(res => {
+      let tokenObject = res.tokenObject;
+      tokenObject.deviceId;
+      this.authPersist.remember = remember ? remember : false;
+      this.authPersist.persistAuthData(tokenObject);
+    });
+
+    return request;
   }
 }
 
