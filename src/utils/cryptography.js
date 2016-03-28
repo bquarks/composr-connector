@@ -12,7 +12,7 @@
  * See http://pajhome.org.uk/crypt/md5 for details.                              *
  * Also http://anmar.eu.org/projects/jssha2/                                     *
  *********************************************************************************/
-
+// TODO: Use ES6 syntax
 /*
  * Configurable variables. You may need to tweak these to be compatible with
  * the server-side, but the defaults work in most cases.
@@ -21,7 +21,7 @@ let hexcase = 0; /* hex output format. 0 - lowercase; 1 - uppercase        */
 let b64pad = ''; /* base-64 pad character. "=" for strict RFC compliance   */
 
 /* jshint ignore:start */
-// jscs:disable 
+// jscs:disable
 let sha256_K = new Array(
   1116352408, 1899447441, -1245643825, -373957723, 961987163, 1508970993, -1841331548, -1424204075, -670586216, 310598401, 607225278, 1426881987,
   1925078388, -2132889090, -1680079193, -1046744716, -459576895, -272742522,

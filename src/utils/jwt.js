@@ -5,7 +5,7 @@ import * as cryptography from './cryptography';
  * Original module: https://github.com/corbel-platform/corbel-js/blob/master/src/jwt.js
  */
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-
+// TODO: Use ES6 syntax
 const EXPIRATION = 3500;
 const ALGORITHM = 'HS256';
 const TYP = 'JWT';
