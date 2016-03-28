@@ -35,6 +35,7 @@ class AuthConnector {
    * @return {Object} Promise
    */
   authenticateClient() {
+    this.authPersist.getTokensFromStorage();
     const storedClientToken = this.authPersist.tokens.client;
     const currentClientAccessToken = this._validateClientAccessToken(storedClientToken);
 

@@ -4,34 +4,9 @@ class AuthPersist {
     this.getTokensFromStorage();
   }
 
-  /**
-   * Stores result auth data in local & session storage
-   *
-   * @param  {Object} data [accessToken, refreshToken, remember]
-   */
-  _persistAuthData(data) {
-    const { accessToken, refreshToken, expiresAt, deviceId } = data;
-
-    if (this.remember) {
-      this._addLocalStorage(data);
-      this._addSessionStorage(data);
-
-    } else {
-      // Not saving in localstorage if user doesnt check remember option
-      // When browser is closed, user is logged out
-      this._addSessionStorage(data);
-    }
-
-    this.tokens.user = {
-      accessToken,
-      refreshToken,
-      expiresAt
-    };
-
-    this.tokens.deviceId = deviceId;
-
-    return true;
-  }
+  /////////////////
+  // Private API //
+  /////////////////
 
   /**
    * Adds data to localStorage
@@ -40,14 +15,14 @@ class AuthPersist {
    */
   _addLocalStorage(data) {
     if (this.remember) {
-      window.localStorage.setItem('remember', true);
-      window.localStorage.setItem('refreshToken', data.refreshToken);
+      window.localStorage.remember = true;
+      window.localStorage.refreshToken = data.refreshToken;
     }
     if (data.deviceId) {
-      window.localStorage.setItem('deviceId', data.deviceId);
+      window.localStorage.deviceId = data.deviceId;
     }
-    window.localStorage.setItem('accessToken', data.accessToken);
-    window.localStorage.setItem('expiresAt', data.expiresAt);
+    window.localStorage.accessToken = data.accessToken;
+    window.localStorage.expiresAt = data.expiresAt;
 
   }
 
@@ -59,14 +34,14 @@ class AuthPersist {
   _addSessionStorage(data) {
 
     if (this.remember) {
-      window.sessionStorage.setItem('remember', true);
+      window.sessionStorage.remember = true;
     }
     if (data.deviceId) {
-      window.sessionStorage.setItem('deviceId', data.deviceId);
+      window.sessionStorage.deviceId = data.deviceId;
     }
-    window.sessionStorage.setItem('refreshToken', data.refreshToken);
-    window.sessionStorage.setItem('accessToken', data.accessToken);
-    window.sessionStorage.setItem('expiresAt', data.expiresAt);
+    window.sessionStorage.refreshToken = data.refreshToken;
+    window.sessionStorage.accessToken = data.accessToken;
+    window.sessionStorage.expiresAt = data.expiresAt;
 
   }
 
@@ -92,9 +67,62 @@ class AuthPersist {
     window.sessionStorage.removeItem('deviceId');
   }
 
-  removeUserCookie(cookieName) {
+  _removeUserCookie(cookieName) {
     document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
+
+  _getDeviceIdFromStorage() {
+    const deviceId = window.sessionStorage.deviceId ||
+      window.localStorage.deviceId;
+    this.deviceId === 'true';
+  }
+
+  _getUserAccessToken() {
+    const sessionStorageToken = {
+      accessToken: window.sessionStorage.accessToken,
+      expiresAt: parseInt(window.sessionStorage.expiresAt)
+    };
+
+    const localStorageToken = {
+      accessToken: window.localStorage.accessToken,
+      expiresAt: parseInt(window.localStorage.expiresAt)
+    };
+
+    let mostRecentToken = {};
+
+    if (!isNaN(sessionStorageToken.expiresAt) && !isNaN(localStorageToken.expiresAt)) {
+      mostRecentToken = sessionStorageToken.expiresAt > localStorageToken.expiresAt ? sessionStorageToken : localStorageToken;
+      return mostRecentToken;
+    }
+
+    mostRecentToken = isNaN(sessionStorageToken.expiresAt) ? localStorageToken : sessionStorageToken;
+
+    return mostRecentToken;
+  }
+
+  _getUserTokens() {
+    const refreshToken =  window.sessionStorage.refreshToken ||
+      window.localStorage.refreshToken;
+    const { accessToken, expiresAt } = this._getUserAccessToken();
+    const userTokens = {
+      refreshToken,
+      accessToken,
+      expiresAt
+    };
+
+    return userTokens;
+  }
+
+  _getClientAccessToken() {
+    let accessToken = window.sessionStorage.clientAccessToken;;
+    let expiresAt = window.sessionStorage.clientExpiresAt;
+
+    return { accessToken, expiresAt };
+  }
+
+  ////////////////
+  // Public API //
+  ////////////////
 
   /**
    * Persist client accessToken
@@ -111,59 +139,39 @@ class AuthPersist {
     };
   }
 
+  /**
+   * Stores result auth data in local & session storage
+   *
+   * @param  {Object} data [accessToken, refreshToken, remember]
+   */
+  persistAuthData(data) {
+    const { accessToken, refreshToken, expiresAt, deviceId } = data;
+
+    if (this.remember) {
+      this._addLocalStorage(data);
+      this._addSessionStorage(data);
+
+    } else {
+      // Not saving in localstorage if user doesnt check remember option
+      // When browser is closed, user is logged out
+      this._addSessionStorage(data);
+    }
+
+    this.tokens.user = {
+      accessToken,
+      refreshToken,
+      expiresAt
+    };
+
+    this.tokens.deviceId = deviceId;
+
+    return true;
+  }
+
   getRememberFromStorage() {
     const remember = window.sessionStorage.getItem('remember') ||
       window.localStorage.getItem('remember');
     this.remember === 'true';
-  }
-
-  _getDeviceIdFromStorage() {
-    const deviceId = window.sessionStorage.getItem('deviceId') ||
-      window.localStorage.getItem('deviceId');
-    this.deviceId === 'true';
-  }
-
-  _getUserAccessToken() {
-    const sessionStorageToken = {
-      accessToken: window.sessionStorage.getItem('accessToken'),
-      expiresAt: parseInt(window.sessionStorage.getItem('expiresAt'))
-    };
-
-    const localStorageToken = {
-      accessToken: window.localStorage.getItem('accessToken'),
-      expiresAt: parseInt(window.localStorage.getItem('expiresAt'))
-    };
-
-    let mostRecentToken = {};
-
-    if (!isNaN(sessionStorageToken.expiresAt) && !isNaN(localStorageToken.expiresAt)) {
-      mostRecentToken = sessionStorageToken.expiresAt > localStorageToken.expiresAt ? sessionStorageToken : localStorageToken;
-      return mostRecentToken;
-    }
-
-    mostRecentToken = isNaN(sessionStorageToken.expiresAt) ? localStorageToken : sessionStorageToken;
-
-    return mostRecentToken;
-  }
-
-  _getUserTokens() {
-    const refreshToken =  window.sessionStorage.getItem('refreshToken') ||
-      window.localStorage.getItem('refreshToken');
-    const { accessToken, expiresAt } = this._getUserAccessToken();
-    const userTokens = {
-      refreshToken,
-      accessToken,
-      expiresAt
-    };
-
-    return userTokens;
-  }
-
-  _getClientAccessToken() {
-    let accessToken = window.sessionStorage.getItem('clientAccessToken', accessToken);;
-    let expiresAt = window.sessionStorage.getItem('clientExpiresAt', expiresAt);;
-
-    return { accessToken, expiresAt };
   }
 
   getTokensFromStorage() {
