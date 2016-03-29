@@ -3,9 +3,11 @@ import AuthPersist from './AuthPersist';
 import * as utils from '../utils/utils';
 
 class AuthConnector {
-  constructor(authConfig) {
+  constructor(authConfig, options = {}) {
     this.authPersist = new AuthPersist();
     this.authRequest = new AuthRequest(authConfig);
+    this.options = options;
+    this.userAuthenticated = false;
   }
 
   /**
@@ -62,7 +64,7 @@ class AuthConnector {
     return clientAccessTokenPromise;
   }
 
-    /**
+  /**
    * Sign in method
    *
    * @return {Object} A result promise
@@ -73,10 +75,34 @@ class AuthConnector {
 
     request.then(res => {
       let tokenObject = res.tokenObject;
-      tokenObject.deviceId;
+      tokenObject.deviceId = deviceId;
       this.authPersist.remember = remember ? remember : false;
       this.authPersist.persistAuthData(tokenObject);
+      this.userAuthenticated = true;
     });
+
+    this.loginUserPromise = request;
+
+    return request;
+  }
+
+  refreshUserToken(refreshPage) {
+    this.authPersist.getTokensFromStorage();
+    this.authPersist.getRememberFromStorage();
+
+    const authData = {
+      refreshToken: this.authPersist.tokens.user.refreshToken,
+      deviceId: this.authPersist.tokens.deviceId
+    };
+
+    const request = this.authRequest.refreshUserToken(authData);
+
+    request.then(res => {
+      this.authPersist.persistAuthData(res.data);
+      this.userAuthenticated = true;
+    });
+
+    this.refreshUserTokenPromise = request;
 
     return request;
   }

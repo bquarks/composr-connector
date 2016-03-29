@@ -74,7 +74,7 @@ class AuthPersist {
   _getDeviceIdFromStorage() {
     const deviceId = window.sessionStorage.deviceId ||
       window.localStorage.deviceId;
-    this.deviceId === 'true';
+    return deviceId;
   }
 
   _getUserAccessToken() {

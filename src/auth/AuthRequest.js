@@ -91,10 +91,9 @@ class AuthRequest {
   /**
    * Authenticates with client scope
    *
-   * @param  {Object}           storedClientToken Token stored in browser
    * @return {Object} Promise
    */
-  authenticateClient(storedClientToken) {
+  authenticateClient() {
     const claims = this._createClaims({}, 'client');
 
     this.clientAccessTokenPromise = this._authenticate('loginClient', claims);
@@ -107,7 +106,7 @@ class AuthRequest {
  * Calls _authenticate() method with the inserted credentials
  * @return {Object} A result promise
  */
-  authenticateUser({email, password, remember, deviceId}) {
+  authenticateUser({email, password, deviceId}) {
       const authData = {
         'basic_auth.username': email,
         'basic_auth.password': password
@@ -122,6 +121,27 @@ class AuthRequest {
       this.userAccessTokenPromise = this._authenticate('login', claims, headers);
 
       return this.userAccessTokenPromise;
+    }
+
+    /**
+   * Refresh Token method
+   * Calls _authenticate() method with the user refresh token provided
+   * @return {Object} A result promise
+   */
+    refreshUserToken({refreshToken, deviceId}) {
+      const authData = {
+        'refresh_token': refreshToken
+      };
+
+      const headers = {
+        'Deviceid': deviceId
+      };
+
+      const claims = this._createClaims(authData, 'user');
+
+      this.refreshTokenPromise = this._authenticate('refreshToken', claims, headers);
+
+      return this.refreshTokenPromise;
     }
 }
 
