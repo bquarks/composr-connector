@@ -18,3 +18,25 @@ All of them are included in bower dependencies. To use them in your app, just ma
 <script src="../bower_components/fetch/fetch.js"></script>
 ```
  You can also consider to use [CDN Polyfill Service]( https://cdn.polyfill.io/v2/docs/).
+
+ ## Testing & Developing
+
+ Clone the project:
+
+ ```git clone https://github.com/bquarks/composr-connector.git```
+
+ Install dependencies:
+
+```npm install```
+
+Run tests:
+
+```npm run tests```
+
+ Build the project (transpiling to ES5):
+
+ ```npm run build```
+
+ Build & launch in browser (http://localhost:3000/):
+
+```npm run serve```
