@@ -17,15 +17,13 @@ class AuthConnector {
    */
   _validateClientAccessToken(clientToken) {
 
-    if (clientToken &&
+    const isValid = (clientToken &&
       clientToken.accessToken &&
       clientToken.expiresAt &&
-      Date.now() < parseInt(clientToken.expiresAt)) {
-      // Accesstoken exists and is not expired
-      return clientToken.accessToken;
-    }
+      Date.now() < parseInt(clientToken.expiresAt));
 
-    return;
+    return isValid ? clientToken.accessToken : false;
+
   }
 
   ////////////////
