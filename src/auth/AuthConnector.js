@@ -106,6 +106,27 @@ class AuthConnector {
 
     return request;
   }
+
+  /**
+   * Logs out method
+   * Calls _authenticate() method with our stored credentials
+   */
+  logoutUser() {
+    this.authPersist.getTokensFromStorage();
+
+    const authData = {
+      accessToken: this.authPersist.tokens.user.accessToken,
+      deviceId: this.authPersist.tokens.deviceId
+    };
+
+    const request = this.authRequest.logoutUser(authData);
+
+    this.userAuthenticated = false;
+
+    this.authPersist.removeAllUserData();
+
+    return request;
+  }
 }
 
 export default AuthConnector;

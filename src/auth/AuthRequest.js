@@ -102,10 +102,11 @@ class AuthRequest {
   }
 
   /**
- * Sign in method
- * Calls _authenticate() method with the inserted credentials
- * @return {Object} A result promise
- */
+   * Sign in method
+   * Calls _authenticate() method with the inserted credentials
+   *
+   * @return {Object} A result promise
+   */
   authenticateUser({email, password, deviceId}) {
       const authData = {
         'basic_auth.username': email,
@@ -118,16 +119,17 @@ class AuthRequest {
 
       const claims = this._createClaims(authData, 'user');
 
-      this.userAccessTokenPromise = this._authenticate('login', claims, headers);
+      const request = this._authenticate('login', claims, headers);
 
-      return this.userAccessTokenPromise;
+      return request;
     }
 
     /**
-   * Refresh Token method
-   * Calls _authenticate() method with the user refresh token provided
-   * @return {Object} A result promise
-   */
+     * Refresh Token method
+     * Calls _authenticate() method with the user refresh token provided
+     *
+     * @return {Object} A result promise
+     */
     refreshUserToken({refreshToken, deviceId}) {
       const authData = {
         'refresh_token': refreshToken
@@ -139,9 +141,26 @@ class AuthRequest {
 
       const claims = this._createClaims(authData, 'user');
 
-      this.refreshTokenPromise = this._authenticate('refreshToken', claims, headers);
+      const request = this._authenticate('refreshToken', claims, headers);
 
-      return this.refreshTokenPromise;
+      return request;
+    }
+
+    /**
+     * Logs out method
+     * Calls _authenticate() method with provided credentials
+     */
+    logoutUser({accessToken, deviceId}) {
+      const headers = {
+        'Authorization': accessToken,
+        'Deviceid': deviceId
+      };
+
+      const claims = this._createClaims({}, 'user');
+
+      const request = this._authenticate('logout', claims, headers);
+
+      return request;
     }
 }
 

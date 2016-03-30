@@ -1,7 +1,8 @@
 class AuthPersist {
-  constructor() {
+  constructor(cookies = []) {
     this.getRememberFromStorage();
     this.getTokensFromStorage();
+    this.cookies = cookies;
   }
 
   /////////////////
@@ -69,6 +70,12 @@ class AuthPersist {
 
   _removeUserCookie(cookieName) {
     document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+
+  _removeUserCookies() {
+    for (const cookie of this.cookies) {
+      this._removeUserCookie(cookie);
+    }
   }
 
   _getDeviceIdFromStorage() {
@@ -166,6 +173,12 @@ class AuthPersist {
     this.tokens.deviceId = deviceId;
 
     return true;
+  }
+
+  removeAllUserData() {
+    this._removeLocalStorage();
+    this._removeSessionStorage();
+    this._removeUserCookies();
   }
 
   getRememberFromStorage() {
