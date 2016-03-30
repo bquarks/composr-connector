@@ -3,9 +3,9 @@ import AuthPersist from './AuthPersist';
 import * as utils from '../utils/utils';
 
 class AuthConnector {
-  constructor(authConfig, options = {}) {
-    this.authPersist = new AuthPersist();
-    this.authRequest = new AuthRequest(authConfig);
+  constructor({options = {}, authConfig, authPersist = new AuthPersist(), authRequest = new AuthRequest(authConfig)}) {
+    this.authPersist = authPersist;
+    this.authRequest = authRequest;
     this.options = options;
     this.userAuthenticated = false;
   }
@@ -108,8 +108,8 @@ class AuthConnector {
   }
 
   /**
-   * Logs out method
-   * Calls _authenticate() method with our stored credentials
+   * Logout method
+   * Calls _authenticate() method
    */
   logoutUser() {
     this.authPersist.getTokensFromStorage();
