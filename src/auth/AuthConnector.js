@@ -84,7 +84,12 @@ class AuthConnector {
     return request;
   }
 
-  refreshUserToken(refreshPage) {
+  /**
+   * Refresh token method
+   *
+   * @return {Object}  A result promise
+   */
+  refreshUserToken() {
     this.authPersist.getTokensFromStorage();
     this.authPersist.getRememberFromStorage();
 
@@ -96,7 +101,7 @@ class AuthConnector {
     const request = this.authRequest.refreshUserToken(authData);
 
     request.then(res => {
-      this.authPersist.persistAuthData(res.data);
+      this.authPersist.persistAuthData(res);
       this.userAuthenticated = true;
     });
 
