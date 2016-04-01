@@ -107,19 +107,15 @@ class AuthRequest {
    *
    * @return {Object} A result promise
    */
-  authenticateUser({email, password, deviceId}) {
-      const authData = {
+  authenticateUser({email, password, headersExtension = {}, authDataExtension = {}}) {
+      const authData = Object.assign({
         'basic_auth.username': email,
         'basic_auth.password': password
-      };
-
-      const headers = {
-        Deviceid: deviceId
-      };
+      }, authDataExtension);
 
       const claims = this._createClaims(authData, 'user');
 
-      const request = this._authenticate('login', claims, headers);
+      const request = this._authenticate('login', claims, headersExtension);
 
       return request;
     }
@@ -130,18 +126,14 @@ class AuthRequest {
      *
      * @return {Object} A result promise
      */
-    refreshUserToken({refreshToken, deviceId}) {
-      const authData = {
+    refreshUserToken({refreshToken, headersExtension = {}, authDataExtension = {}}) {
+      const authData = Object.assign({
         'refresh_token': refreshToken
-      };
-
-      const headers = {
-        'Deviceid': deviceId
-      };
+      }, authDataExtension);
 
       const claims = this._createClaims(authData, 'user');
 
-      const request = this._authenticate('refreshToken', claims, headers);
+      const request = this._authenticate('refreshToken', claims, headersExtension);
 
       return request;
     }
@@ -150,13 +142,12 @@ class AuthRequest {
      * Logs out method
      * Calls _authenticate() method with provided credentials
      */
-    logoutUser({accessToken, deviceId}) {
-      const headers = {
+    logoutUser({accessToken, headersExtension = {}, authDataExtension = {}}) {
+      const headers = Object.assign({
         'Authorization': accessToken,
-        'Deviceid': deviceId
-      };
+      }, headersExtension);
 
-      const claims = this._createClaims({}, 'user');
+      const claims = this._createClaims(authDataExtension, 'user');
 
       const request = this._authenticate('logout', claims, headers);
 

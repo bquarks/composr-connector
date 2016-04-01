@@ -62,14 +62,24 @@ class AuthConnector {
     return clientAccessTokenPromise;
   }
 
+  _addExtension() {
+
+  }
+
   /**
    * Sign in method
    *
    * @return {Object} A result promise
    */
-  loginUser({email, password, remember}) {
+  loginUser({email, password, remember, options}) {
     const deviceId = 'Web-' + utils.generateUUID();
-    const request = this.authRequest.authenticateUser({email, password, remember, deviceId});
+    const headersExtension = {
+      Deviceid: deviceId
+    };
+    const authDataExtension = {
+      'device_id': deviceId
+    };
+    const request = this.authRequest.authenticateUser({email, password, remember, headersExtension, authDataExtension});
 
     request.then(res => {
       let tokenObject = res.tokenObject;
@@ -93,12 +103,15 @@ class AuthConnector {
     this.authPersist.getTokensFromStorage();
     this.authPersist.getRememberFromStorage();
 
-    const authData = {
-      refreshToken: this.authPersist.tokens.user.refreshToken,
-      deviceId: this.authPersist.tokens.deviceId
+    const refreshToken = this.authPersist.tokens.user.refreshToken;
+    const headersExtension = {
+      Deviceid: this.authPersist.tokens.deviceId
+    };
+    const authDataExtension = {
+      'device_id': this.authPersist.tokens.deviceId
     };
 
-    const request = this.authRequest.refreshUserToken(authData);
+    const request = this.authRequest.refreshUserToken({refreshToken, headersExtension, authDataExtension});
 
     request.then(res => {
       this.authPersist.persistAuthData(res);
@@ -117,12 +130,15 @@ class AuthConnector {
   logoutUser() {
     this.authPersist.getTokensFromStorage();
 
-    const authData = {
-      accessToken: this.authPersist.tokens.user.accessToken,
-      deviceId: this.authPersist.tokens.deviceId
+    const accessToken = this.authPersist.tokens.user.accessToken;
+    const headersExtension = {
+      Deviceid: this.authPersist.tokens.deviceId
+    };
+    const authDataExtension = {
+      'device_id': this.authPersist.tokens.deviceId
     };
 
-    const request = this.authRequest.logoutUser(authData);
+    const request = this.authRequest.logoutUser({accessToken, headersExtension, authDataExtension});
 
     this.userAuthenticated = false;
 
