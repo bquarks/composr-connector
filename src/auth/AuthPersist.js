@@ -19,8 +19,8 @@ class AuthPersist {
       window.localStorage.remember = true;
       window.localStorage.refreshToken = data.refreshToken;
     }
-    if (data.deviceId) {
-      window.localStorage.deviceId = data.deviceId;
+    if (data.authOptions) {
+      window.localStorage.authOptions = JSON.stringify(data.authOptions);
     }
     window.localStorage.accessToken = data.accessToken;
     window.localStorage.expiresAt = data.expiresAt;
@@ -37,8 +37,8 @@ class AuthPersist {
     if (this.remember) {
       window.sessionStorage.remember = true;
     }
-    if (data.deviceId) {
-      window.sessionStorage.deviceId = data.deviceId;
+    if (data.authOptions) {
+      window.sessionStorage.authOptions = JSON.stringify(data.authOptions);
     }
     window.sessionStorage.refreshToken = data.refreshToken;
     window.sessionStorage.accessToken = data.accessToken;
@@ -54,7 +54,7 @@ class AuthPersist {
     window.localStorage.removeItem('accessToken');
     window.localStorage.removeItem('expiresAt');
     window.localStorage.removeItem('remember');
-    window.localStorage.removeItem('deviceId');
+    window.localStorage.removeItem('authOptions');
   }
 
   /**
@@ -65,7 +65,7 @@ class AuthPersist {
     window.sessionStorage.removeItem('accessToken');
     window.sessionStorage.removeItem('expiresAt');
     window.sessionStorage.removeItem('remember');
-    window.sessionStorage.removeItem('deviceId');
+    window.sessionStorage.removeItem('authOptions');
   }
 
   _removeUserCookie(cookieName) {
@@ -78,10 +78,15 @@ class AuthPersist {
     }
   }
 
-  _getDeviceIdFromStorage() {
-    const deviceId = window.sessionStorage.deviceId ||
-      window.localStorage.deviceId;
-    return deviceId;
+  _getAuthOptionsFromStorage() {
+    let authOptions = window.sessionStorage.authOptions ||
+      window.localStorage.authOptions;
+    try {
+      authOptions = JSON.parse(authOptions);
+    } catch (err) {
+      authOptions = {};
+    }
+    return authOptions;
   }
 
   _getUserAccessToken() {
@@ -108,9 +113,12 @@ class AuthPersist {
   }
 
   _getUserTokens() {
-    const refreshToken =  window.sessionStorage.refreshToken ||
+    const refreshToken = window.sessionStorage.refreshToken ||
       window.localStorage.refreshToken;
-    const { accessToken, expiresAt } = this._getUserAccessToken();
+    const {
+      accessToken,
+      expiresAt
+    } = this._getUserAccessToken();
     const userTokens = {
       refreshToken,
       accessToken,
@@ -124,7 +132,10 @@ class AuthPersist {
     let accessToken = window.sessionStorage.clientAccessToken;;
     let expiresAt = window.sessionStorage.clientExpiresAt;
 
-    return { accessToken, expiresAt };
+    return {
+      accessToken,
+      expiresAt
+    };
   }
 
   ////////////////
@@ -135,7 +146,10 @@ class AuthPersist {
    * Persist client accessToken
    */
   persistClientToken(data) {
-    let { accessToken, expiresAt } = data;
+    let {
+      accessToken,
+      expiresAt
+    } = data;
 
     window.sessionStorage.setItem('clientAccessToken', accessToken);
     window.sessionStorage.setItem('clientExpiresAt', expiresAt);
@@ -152,7 +166,12 @@ class AuthPersist {
    * @param  {Object} data [accessToken, refreshToken, remember]
    */
   persistAuthData(data) {
-    const { accessToken, refreshToken, expiresAt, deviceId } = data;
+    const {
+      accessToken,
+      refreshToken,
+      expiresAt,
+      authOptions
+    } = data;
 
     if (this.remember) {
       this._addLocalStorage(data);
@@ -170,7 +189,7 @@ class AuthPersist {
       expiresAt
     };
 
-    this.tokens.deviceId = deviceId;
+    this.tokens.authOptions = authOptions;
 
     return true;
   }
@@ -191,7 +210,7 @@ class AuthPersist {
     let tokens = {
       client: this._getClientAccessToken(),
       user: this._getUserTokens(),
-      deviceId: this._getDeviceIdFromStorage()
+      authOptions: this._getAuthOptionsFromStorage()
     };
     this.tokens = tokens;
 

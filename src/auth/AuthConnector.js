@@ -6,7 +6,16 @@ class AuthConnector {
   constructor({options = {}, authConfig, authPersist = new AuthPersist(), authRequest = new AuthRequest(authConfig)}) {
     this.authPersist = authPersist;
     this.authRequest = authRequest;
-    this.options = options;
+    // this.options = options;
+    // TODO (Ivan): Expose utils and remove next expresion
+    this.options = {
+      headersExtension: {
+        Deviceid: 'Web-' + utils.generateUUID()
+      },
+      authDataExtension: {
+        'device_id': 'Web-' + utils.generateUUID()
+      }
+    };
     this.userAuthenticated = false;
   }
 
@@ -72,18 +81,13 @@ class AuthConnector {
    * @return {Object} A result promise
    */
   loginUser({email, password, remember, options}) {
-    const deviceId = 'Web-' + utils.generateUUID();
-    const headersExtension = {
-      Deviceid: deviceId
-    };
-    const authDataExtension = {
-      'device_id': deviceId
-    };
+    const { authDataExtension = {}, headersExtension = {}} = this.options;
+
     const request = this.authRequest.authenticateUser({email, password, remember, headersExtension, authDataExtension});
 
     request.then(res => {
       let tokenObject = res.tokenObject;
-      tokenObject.deviceId = deviceId;
+      tokenObject.authOptions = this.options;
       this.authPersist.remember = remember ? remember : false;
       this.authPersist.persistAuthData(tokenObject);
       this.userAuthenticated = true;
@@ -104,12 +108,7 @@ class AuthConnector {
     this.authPersist.getRememberFromStorage();
 
     const refreshToken = this.authPersist.tokens.user.refreshToken;
-    const headersExtension = {
-      Deviceid: this.authPersist.tokens.deviceId
-    };
-    const authDataExtension = {
-      'device_id': this.authPersist.tokens.deviceId
-    };
+    const { authDataExtension = {}, headersExtension = {}} = this.authPersist.tokens.authOptions;
 
     const request = this.authRequest.refreshUserToken({refreshToken, headersExtension, authDataExtension});
 
@@ -131,12 +130,7 @@ class AuthConnector {
     this.authPersist.getTokensFromStorage();
 
     const accessToken = this.authPersist.tokens.user.accessToken;
-    const headersExtension = {
-      Deviceid: this.authPersist.tokens.deviceId
-    };
-    const authDataExtension = {
-      'device_id': this.authPersist.tokens.deviceId
-    };
+    const { authDataExtension = {}, headersExtension = {}} = this.authPersist.tokens.authOptions;
 
     const request = this.authRequest.logoutUser({accessToken, headersExtension, authDataExtension});
 
