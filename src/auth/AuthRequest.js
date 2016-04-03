@@ -1,10 +1,9 @@
 import * as utils from '../utils/utils';
 
 class AuthRequest {
-  constructor(authConfig, endpoints) {
+  constructor(authConfig) {
     // Init auth variables
     this.authConfig = authConfig;
-    this.endpoints = endpoints || authConfig.endpoints;
   }
 
   /////////////////
@@ -20,18 +19,15 @@ class AuthRequest {
    * @return {Object}
    */
   _createClaims(authData, scope) {
-    let {
-      clientId, iamAUD, scopes
-    } = this.authConfig;
+    const { clientId, iamAUD, scopes, defaultAuthData } = this.authConfig;
     let claims = {
       iss: clientId,
       aud: iamAUD,
       scope: scopes[scope]
     };
 
-    if (authData) {
-      Object.assign(claims, authData);
-    }
+    Object.assign(claims, defaultAuthData);
+    Object.assign(claims, authData);
 
     return claims;
   }
@@ -56,21 +52,22 @@ class AuthRequest {
    * @param  {Object} headers
    * @return {Object} A result promise
    */
-  _authenticate(endpoint, claims, headers = {}) {
-    const url = utils.buildURI(this.authConfig.urlBase) + this.endpoints[endpoint];
-    const clientSecret = this.authConfig.clientSecret;
+  _authenticate(endpoint, claims, headers) {
+    const { endpoints, urlBase, clientSecret, defaultHeaders } = this.authConfig;
+    const url = utils.buildURI(urlBase) + endpoints[endpoint];
     const jwt = this._generateAssertion(claims, clientSecret);
     const body = {
       jwt
     };
-    let defaultHeaders = {
+    let authenticationHeaders = {
       'Accept': 'application/json',
       'Content-Type': 'application/json; charset=utf-8'
     };
 
-    Object.assign(defaultHeaders, headers);
+    Object.assign(authenticationHeaders, defaultHeaders);
+    Object.assign(authenticationHeaders, headers);
 
-    let headersInstance = new Headers(defaultHeaders);
+    let headersInstance = new Headers(authenticationHeaders);
 
     const request = new Request(url, {
       credentials: 'same-origin',
@@ -108,51 +105,51 @@ class AuthRequest {
    * @return {Object} A result promise
    */
   authenticateUser({email, password, headersExtension = {}, authDataExtension = {}}) {
-      const authData = Object.assign({
-        'basic_auth.username': email,
-        'basic_auth.password': password
-      }, authDataExtension);
+    const authData = Object.assign({
+      'basic_auth.username': email,
+      'basic_auth.password': password
+    }, authDataExtension);
 
-      const claims = this._createClaims(authData, 'user');
+    const claims = this._createClaims(authData, 'user');
 
-      const request = this._authenticate('login', claims, headersExtension);
+    const request = this._authenticate('login', claims, headersExtension);
 
-      return request;
-    }
+    return request;
+  }
 
-    /**
-     * Refresh Token method
-     * Calls _authenticate() method with the user refresh token provided
-     *
-     * @return {Object} A result promise
-     */
-    refreshUserToken({refreshToken, headersExtension = {}, authDataExtension = {}}) {
-      const authData = Object.assign({
-        'refresh_token': refreshToken
-      }, authDataExtension);
+  /**
+   * Refresh Token method
+   * Calls _authenticate() method with the user refresh token provided
+   *
+   * @return {Object} A result promise
+   */
+  refreshUserToken({refreshToken, headersExtension = {}, authDataExtension = {}}) {
+    const authData = Object.assign({
+      'refresh_token': refreshToken
+    }, authDataExtension);
 
-      const claims = this._createClaims(authData, 'user');
+    const claims = this._createClaims(authData, 'user');
 
-      const request = this._authenticate('refreshToken', claims, headersExtension);
+    const request = this._authenticate('refreshToken', claims, headersExtension);
 
-      return request;
-    }
+    return request;
+  }
 
-    /**
-     * Logs out method
-     * Calls _authenticate() method with provided credentials
-     */
-    logoutUser({accessToken, headersExtension = {}, authDataExtension = {}}) {
-      const headers = Object.assign({
-        'Authorization': accessToken,
-      }, headersExtension);
+  /**
+   * Logs out method
+   * Calls _authenticate() method with provided credentials
+   */
+  logoutUser({accessToken, headersExtension = {}, authDataExtension = {}}) {
+    const headers = Object.assign({
+      'Authorization': accessToken,
+    }, headersExtension);
 
-      const claims = this._createClaims(authDataExtension, 'user');
+    const claims = this._createClaims(authDataExtension, 'user');
 
-      const request = this._authenticate('logout', claims, headers);
+    const request = this._authenticate('logout', claims, headers);
 
-      return request;
-    }
+    return request;
+  }
 }
 
 export default AuthRequest;

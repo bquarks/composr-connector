@@ -32,8 +32,7 @@ describe('AuthRequest', () => {
 
     it('has all properties', () => {
       expect(authRequest).to.include.keys(
-        'authConfig',
-        'endpoints'
+        'authConfig'
       );
     });
   });
