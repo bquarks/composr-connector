@@ -20,6 +20,28 @@ class AuthConnector {
   }
 
   /**
+   * Validates accesstoken and refresh if it's necessary
+   */
+  _validateAccessToken() {
+    this.authPersist.getTokensFromStorage();
+    const { accessToken, expiresAt, refreshToken } = this.authPersist.tokens.user;
+    const validAccessToken = accessToken && expiresAt && (Date.now() < expiresAt);
+    let accessTokenPromise;
+
+    if (validAccessToken) {
+      // Accesstoken exists and is not expired
+      accessTokenPromise = Promise.resolve({accessToken});
+    } else if (refreshToken) {
+      // AccessToken expired or missed: refresh token if exists
+      accessTokenPromise = this.refreshUserToken();
+    } else {
+      accessTokenPromise = Promise.reject('No accessToken or refreshToken');
+    }
+
+    return accessTokenPromise;
+  }
+
+  /**
    * Validates if clientAccessToken exists in sessionStorage and is not expired
    *
    * @return {String} clientAccessToken
@@ -38,6 +60,43 @@ class AuthConnector {
   ////////////////
   // Public API //
   ////////////////
+
+  /**
+   * Init method
+   * Make a client login and use authValidation method
+   * to check if exists a previous valid session
+   */
+  init() {
+    this.loginClient();
+    this.authValidation()
+    .then(() => this.userAuthenticated = true)
+    .catch(() => this.userAuthenticated = false);
+  }
+
+  /**
+   * Checks if exists a valid user session
+   *
+   * @return {Object} Promise
+   */
+  authValidation() {
+    var that = this;
+    // Use a previous authValidation promise if it is already pending
+    if (this.validationPromise && this._validationState === 'Pending') {
+      return this.validationPromise;
+    }
+
+    this._validationState = 'Pending';
+
+    const validationRequest = this._validateAccessToken();
+
+    validationRequest
+    .then(() => this._validationState = 'Resolved')
+    .catch(() => this._validationState = 'Resolved');
+
+    this.validationPromise = validationRequest;
+
+    return validationRequest;
+  }
 
   /**
    * Authenticates with client scope
@@ -71,19 +130,21 @@ class AuthConnector {
     return clientAccessTokenPromise;
   }
 
-  _addExtension() {
-
-  }
-
   /**
    * Sign in method
    *
    * @return {Object} A result promise
    */
   loginUser({email, password, remember, options}) {
-    const { authDataExtension = {}, headersExtension = {}} = this.options;
+    const {authDataExtension = {}, headersExtension = {}} = this.options;
 
-    const request = this.authRequest.authenticateUser({email, password, remember, headersExtension, authDataExtension});
+    const request = this.authRequest.authenticateUser({
+      email,
+      password,
+      remember,
+      headersExtension,
+      authDataExtension
+    });
 
     request.then(res => {
       let tokenObject = res.tokenObject;
@@ -105,12 +166,15 @@ class AuthConnector {
    */
   refreshUserToken() {
     this.authPersist.getTokensFromStorage();
-    this.authPersist.getRememberFromStorage();
 
     const refreshToken = this.authPersist.tokens.user.refreshToken;
-    const { authDataExtension = {}, headersExtension = {}} = this.authPersist.tokens.authOptions;
+    const { authDataExtension = {}, headersExtension = {} } = this.authPersist.tokens.authOptions;
 
-    const request = this.authRequest.refreshUserToken({refreshToken, headersExtension, authDataExtension});
+    const request = this.authRequest.refreshUserToken({
+      refreshToken,
+      headersExtension,
+      authDataExtension
+    });
 
     request.then(res => {
       this.authPersist.persistAuthData(res);
@@ -130,9 +194,13 @@ class AuthConnector {
     this.authPersist.getTokensFromStorage();
 
     const accessToken = this.authPersist.tokens.user.accessToken;
-    const { authDataExtension = {}, headersExtension = {}} = this.authPersist.tokens.authOptions;
+    const {authDataExtension = {}, headersExtension = {}} = this.authPersist.tokens.authOptions;
 
-    const request = this.authRequest.logoutUser({accessToken, headersExtension, authDataExtension});
+    const request = this.authRequest.logoutUser({
+      accessToken,
+      headersExtension,
+      authDataExtension
+    });
 
     this.userAuthenticated = false;
 

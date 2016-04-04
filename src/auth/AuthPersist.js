@@ -203,7 +203,10 @@ class AuthPersist {
   getRememberFromStorage() {
     const remember = window.sessionStorage.getItem('remember') ||
       window.localStorage.getItem('remember');
-    this.remember === 'true';
+
+    this.remember = (remember === 'true');
+
+    return this.remember;
   }
 
   getTokensFromStorage() {
