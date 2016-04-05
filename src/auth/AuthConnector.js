@@ -19,18 +19,24 @@ class AuthConnector {
     this.userAuthenticated = false;
   }
 
+  /////////////////
+  // Private API //
+  /////////////////
+
   /**
    * Validates accesstoken and refresh if it's necessary
    */
   _validateAccessToken() {
     this.authPersist.getTokensFromStorage();
-    const { accessToken, expiresAt, refreshToken } = this.authPersist.tokens.user;
+    const {accessToken, expiresAt, refreshToken} = this.authPersist.tokens.user;
     const validAccessToken = accessToken && expiresAt && (Date.now() < expiresAt);
     let accessTokenPromise;
 
     if (validAccessToken) {
       // Accesstoken exists and is not expired
-      accessTokenPromise = Promise.resolve({accessToken});
+      accessTokenPromise = Promise.resolve({
+        accessToken
+      });
     } else if (refreshToken) {
       // AccessToken expired or missed: refresh token if exists
       accessTokenPromise = this.refreshUserToken();
@@ -69,8 +75,8 @@ class AuthConnector {
   init() {
     this.loginClient();
     this.authValidation()
-    .then(() => this.userAuthenticated = true)
-    .catch(() => this.userAuthenticated = false);
+      .then(() => this.userAuthenticated = true)
+      .catch(() => this.userAuthenticated = false);
   }
 
   /**
@@ -90,12 +96,33 @@ class AuthConnector {
     const validationRequest = this._validateAccessToken();
 
     validationRequest
-    .then(() => this._validationState = 'Resolved')
-    .catch(() => this._validationState = 'Resolved');
+      .then(() => this._validationState = 'Resolved')
+      .catch(() => this._validationState = 'Resolved');
 
     this.validationPromise = validationRequest;
 
     return validationRequest;
+  }
+
+ /**
+  * Dispatch user accessToken if it's available, if not, dispatch client accessToken
+  *
+  * @return {Object} Promise
+  */
+  getCurrentToken() {
+    this.authPersist.getTokensFromStorage();
+
+    const currentTokenPromise = this.authValidation()
+    .then(() => {
+      const accessToken = this.authPersist.tokens.user.accessToken;
+      if (accessToken && this.userAuthenticated === false) {
+        this.userAuthenticated = true;
+      }
+      return accessToken;
+    })
+    .catch(() => this.loginClient());
+
+    return currentTokenPromise;
   }
 
   /**
@@ -168,7 +195,7 @@ class AuthConnector {
     this.authPersist.getTokensFromStorage();
 
     const refreshToken = this.authPersist.tokens.user.refreshToken;
-    const { authDataExtension = {}, headersExtension = {} } = this.authPersist.tokens.authOptions;
+    const {authDataExtension = {}, headersExtension = {}} = this.authPersist.tokens.authOptions;
 
     const request = this.authRequest.refreshUserToken({
       refreshToken,
