@@ -162,7 +162,7 @@ class AuthConnector {
    *
    * @return {Object} A result promise
    */
-  loginUser({email, password, remember, options}) {
+  loginUser({email, password, remember}) {
     const {authDataExtension = {}, headersExtension = {}} = this.options;
 
     const request = this.authRequest.authenticateUser({
