@@ -61,7 +61,7 @@ Using Node.js / Browserify / RequireJS:
 var composrCR = require('composr-connector');
 ```
 
-If you don't use the previous options, a global variable will expose named ```composrCR```.
+If you don't use the previous options, a global variable will be exposed: ```composrCR```.
 
 ### Authentication
 
@@ -149,17 +149,17 @@ This will load tokens from previous sessions (stored in local or session Storage
 **AuthConnector**
 * Methods
   - **loginClient()**
-    ```
+    ```javascript
     authConnector.loginClient()
     .then((clientToken) => console.log('My new client token:', clientToken))
     .catch((err) => console.log('Something went wrong trying to obtain the client token:', err));
     ```
     Application login with client scopes.
 
-    Returns a **promise** with the authentication result.
+    Returns a *promise* with the authentication result.
 
   - **loginUser({email, password, remember})**
-    ```
+    ```javascript
     authConnector.loginUser({
       email: 'myemail@myemailservice.com',
       password: 'mypass',
@@ -170,22 +170,22 @@ This will load tokens from previous sessions (stored in local or session Storage
     ```
     Application login with user scopes.
 
-    If **remember** is true, authentication tokens will persist in localStorage for further sessions.
+    If *remember* is true, authentication tokens will persist in localStorage for further sessions.
 
-    Returns a **promise** with the authentication result.
+    Returns a *promise* with the authentication result.
 
   - **refreshUserToken()**
-    ```
+    ```javascript
     authConnector.refreshUserToken()
     .then((accessToken) => console.log('My new user token:', userToken))
     .catch((err) => console.log('Something went wrong trying to refresh user token:', err));
     ```
     Uses refreshToken stored in browser to fetch a new accessToken.
 
-    Returns a **promise** with the refresh token result.
+    Returns a *promise* with the refresh token result.
 
   - **logoutUser()**
-    ```
+    ```javascript
     authConnector.logoutUser()
     .then(() => console.log('Logged out'))
     .catch((err) => console.log('Something went wrong trying to log out with server:', err));
@@ -193,28 +193,28 @@ This will load tokens from previous sessions (stored in local or session Storage
     User logout with server.
     It also removes all user auth data stored in browser.
 
-    Returns a **promise** with the request logout result.
+    Returns a *promise* with the request logout result.
     If request fails, all data in browser will be removed anyway.
 
   - **authValidation()**
-    ```
+    ```javascript
     authConnector.authValidation()
     .then((userToken) => console.log('Your user token:', userToken))
     .catch(() => console.log('It was not posible to login with user scopes.'));
     ```
     Checks if exists a valid user session stored in browser.
 
-    Returns a **promise** that will success if there is a valid session, returning an user token.
+    Returns a *promise* that will success if there is a valid session, returning an user token.
 
   - **getCurrentToken()**
-    ```
+    ```javascript
     authConnector.getCurrentToken()
     .then((currentToken) => console.log('This is your current token:', currentToken))
     .catch((err) => console.log('Something failed trying to obtain the token:', err));
     ```
     Checks the current token available.
 
-    Returns a **promise** that will success returning the user token if it's available, if not, returns client token.
+    Returns a *promise* that will success returning the user token if it's available, if not, returns client token.
 
 * Properties
   - **userAuthenticated**
