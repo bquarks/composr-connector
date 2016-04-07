@@ -8,6 +8,8 @@ class Connect {
     this.authConnector = authConnector;
     this.endpoints = config.endpoints;
     this.urlBase = config.urlBase;
+
+    this.authConnector.init();
   }
 
   /////////////////
@@ -82,7 +84,8 @@ class Connect {
       body
     });
 
-    return request;
+    return fetch(request)
+      .then(utils.checkStatus);
   }
 
   ////////////////
@@ -102,8 +105,6 @@ class Connect {
 
         return request;
       })
-      .then(fetch)
-      .then(utils.checkStatus)
       .catch((err) => {
         if (retry && err.status === 401 && this.authConnector.userAuthenticated) {
           return this.authConnector.refreshUserToken()
@@ -111,9 +112,7 @@ class Connect {
               const request = this._buildRequest(requestData, accessToken);
 
               return request;
-            })
-            .then(fetch)
-            .then(utils.checkStatus);
+            });
         }
 
         throw err;
