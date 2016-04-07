@@ -90,8 +90,10 @@ class Connect {
           .then(({accessToken}) => {
             const request = this._buildRequest(requestData, accessToken);
 
-            return fetch(request);
-          });
+            return request;
+          })
+          .then(fetch)
+          .then(utils.checkStatus);
         }
 
         return err;
