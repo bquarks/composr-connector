@@ -49,7 +49,14 @@ class Connect {
     return url;
   }
 
-  _buildRequest({url, headers, method, body}) {
+  _buildRequest({endpoint, method, params = {}, headersExtension}, token) {
+    const {body, queryPath} = this._buildRequestParams(params);
+    const url = this._buildUrl({
+      endpoint,
+      queryPath
+    });
+    const headers = this._buildHeaders({token, headersExtension});
+
     const request = new Request(url, {
       credentials: 'same-origin',
       mode: 'cors',
@@ -68,27 +75,27 @@ class Connect {
    * @param  {Object} requestData
    * @return {Object} Promise
    */
-  request({endpoint, method, params = {}, headersExtension}) {
+  request(requestData, retry = true) {
     const fetchRequest = this.authConnector.getCurrentToken()
       .then((token) => {
-        const {body, queryPath} = this._buildRequestParams(params);
-        const headers = this._buildHeaders({token, headersExtension});
-        const url = this._buildUrl({
-          endpoint,
-          queryPath
-        });
-
-        const request = this._buildRequest({
-          url,
-          headers,
-          method,
-          body
-        });
+        const request = this._buildRequest(requestData, token);
 
         return request;
       })
       .then(fetch)
-      .then(utils.checkStatus);
+      .then(utils.checkStatus)
+      .catch((err) => {
+        if (retry && err.status === 401 && this.authConnector.userAuthenticated) {
+          return this.authConnector.refreshUserToken()
+          .then(({accessToken}) => {
+            const request = this._buildRequest(requestData, accessToken);
+
+            return fetch(request);
+          });
+        }
+
+        return err;
+      });
 
     return fetchRequest;
   }

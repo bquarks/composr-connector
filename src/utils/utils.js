@@ -9,7 +9,8 @@ export function checkStatus(response) {
     return response.json();
   } else {
     var error = new Error(response.statusText);
-    error.response = response.json();
+    error.status = response.status;
+    error.response = response;
     throw error;
   }
 }
