@@ -2,11 +2,17 @@ import AuthConnector from '../auth/AuthConnector';
 import * as utils from '../utils/utils';
 
 class Connect {
-  constructor({config, authConnector = new AuthConnector({authConfig: config})}) {
+  constructor({config, authConnector = new AuthConnector({
+        authConfig: config
+      })}) {
     this.authConnector = authConnector;
     this.endpoints = config.endpoints;
     this.urlBase = config.urlBase;
   }
+
+  /////////////////
+  // Private API //
+  /////////////////
 
   _buildHeaders({token, headersExtension}) {
     const defaultHeaders = {
@@ -22,6 +28,10 @@ class Connect {
 
   _buildRequestParams({body, queryParams}) {
     const queryPath = this._buildQueryPath(queryParams);
+
+    if (body) {
+      body = JSON.stringify(body);
+    }
 
     return {
       body,
@@ -49,13 +59,19 @@ class Connect {
     return url;
   }
 
-  _buildRequest({endpoint, method, params = {}, data, headersExtension}, token) {
-    const {body, queryPath} = this._buildRequestParams({queryParams: params, body: data});
+  _buildRequest({endpoint, method, params, data, headersExtension} , token) {
+    const {body, queryPath} = this._buildRequestParams({
+      queryParams: params,
+      body: data
+    });
     const url = this._buildUrl({
       endpoint,
       queryPath
     });
-    const headers = this._buildHeaders({token, headersExtension});
+    const headers = this._buildHeaders({
+      token,
+      headersExtension
+    });
 
     const request = new Request(url, {
       credentials: 'same-origin',
@@ -91,13 +107,13 @@ class Connect {
       .catch((err) => {
         if (retry && err.status === 401 && this.authConnector.userAuthenticated) {
           return this.authConnector.refreshUserToken()
-          .then(({accessToken}) => {
-            const request = this._buildRequest(requestData, accessToken);
+            .then(({accessToken}) => {
+              const request = this._buildRequest(requestData, accessToken);
 
-            return request;
-          })
-          .then(fetch)
-          .then(utils.checkStatus);
+              return request;
+            })
+            .then(fetch)
+            .then(utils.checkStatus);
         }
 
         return err;
@@ -106,16 +122,72 @@ class Connect {
     return fetchRequest;
   }
 
-  get() {
+  /**
+   * GET request
+   *
+   * @param  {String} endpoint
+   * @param  {Object} params
+   * @return {Object}  Request promise
+   */
+  get(endpoint, params) {
+    const requestData = {
+      method: 'get',
+      endpoint,
+      params
+    };
+
+    return this.request(requestData);
   }
 
-  post() {
+  /**
+   * DELETE request
+   *
+   * @param  {String} endpoint
+   * @param  {Object} params
+   * @return {Object}  Request promise
+   */
+  delete(endpoint, params) {
+    const requestData = {
+      method: 'delete',
+      endpoint,
+      params
+    };
+
+    return this.request(requestData);
   }
 
-  put() {
+  /**
+   * POST request
+   *
+   * @param  {String} endpoint
+   * @param  {Object} data
+   * @return {Object}  Request promise
+   */
+  post(endpoint, data) {
+    const requestData = {
+      method: 'post',
+      endpoint,
+      data
+    };
+
+    return this.request(requestData);
   }
 
-  delete() {
+  /**
+   * PUT request
+   *
+   * @param  {String} endpoint
+   * @param  {Object} data
+   * @return {Object}  Request promise
+   */
+  put(endpoint, data) {
+    const requestData = {
+      method: 'put',
+      endpoint,
+      data
+    };
+
+    return this.request(requestData);
   }
 
 }
