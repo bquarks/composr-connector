@@ -2,7 +2,7 @@ import AuthConnector from '../auth/AuthConnector';
 import * as utils from '../utils/utils';
 
 class Connect {
-  constructor({authConnector = new AuthConnector(config), config}) {
+  constructor({config, authConnector = new AuthConnector({authConfig: config})}) {
     this.authConnector = authConnector;
     this.endpoints = config.endpoints;
     this.urlBase = config.urlBase;
@@ -43,7 +43,11 @@ class Connect {
     return query;
   }
 
-  _buildUrl({endpoint, queryPath}) {}
+  _buildUrl({endpoint, queryPath}) {
+    const url = utils.buildURI(this.urlBase) + this.endpoints[endpoint] + queryPath;
+
+    return url;
+  }
 
   _buildRequest({url, headers, method, body}) {
     const request = new Request(url, {
@@ -64,11 +68,11 @@ class Connect {
    * @param  {Object} requestData
    * @return {Object} Promise
    */
-  request({endpoint, method, params}) {
+  request({endpoint, method, params = {}, headersExtension}) {
     const fetchRequest = this.authConnector.getCurrentToken()
       .then((token) => {
         const {body, queryPath} = this._buildRequestParams(params);
-        const headers = this._buildHeaders(token);
+        const headers = this._buildHeaders({token, headersExtension});
         const url = this._buildUrl({
           endpoint,
           queryPath
