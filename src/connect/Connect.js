@@ -32,7 +32,7 @@ class Connect {
   _buildQueryPath(dict) {
     var query = '';
     if (dict) {
-      var queries = [];
+      var queries = ['?'];
       Object.keys(dict).forEach(function(key) {
         queries.push(key + '=' + dict[key]);
       });
@@ -49,8 +49,8 @@ class Connect {
     return url;
   }
 
-  _buildRequest({endpoint, method, params = {}, headersExtension}, token) {
-    const {body, queryPath} = this._buildRequestParams(params);
+  _buildRequest({endpoint, method, params = {}, data, headersExtension}, token) {
+    const {body, queryPath} = this._buildRequestParams({queryParams: params, body: data});
     const url = this._buildUrl({
       endpoint,
       queryPath
@@ -68,6 +68,10 @@ class Connect {
 
     return request;
   }
+
+  ////////////////
+  // Public API //
+  ////////////////
 
   /**
    * Send request
@@ -101,6 +105,19 @@ class Connect {
 
     return fetchRequest;
   }
+
+  get() {
+  }
+
+  post() {
+  }
+
+  put() {
+  }
+
+  delete() {
+  }
+
 }
 
 export default Connect;
