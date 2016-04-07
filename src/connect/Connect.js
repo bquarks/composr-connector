@@ -42,12 +42,12 @@ class Connect {
   _buildQueryPath(dict) {
     var query = '';
     if (dict) {
-      var queries = ['?'];
+      var queries = [];
       Object.keys(dict).forEach(function(key) {
         queries.push(key + '=' + dict[key]);
       });
       if (queries.length > 0) {
-        query = queries.join('&');
+        query = '?' + queries.join('&');
       }
     }
     return query;
