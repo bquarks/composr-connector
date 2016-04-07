@@ -116,7 +116,7 @@ class Connect {
             .then(utils.checkStatus);
         }
 
-        return err;
+        throw err;
       });
 
     return fetchRequest;
