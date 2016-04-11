@@ -63,16 +63,39 @@ var composrCR = require('composr-connector');
 
 If you don't use the previous options, a global variable will be exposed: ```composrCR```.
 
-### Authentication
 
-First, we need to create an instance of AuthConnector:
+#### Initialization
+
+Create a new instance of Connect:
 
 ```javascript
-const authConnector = new composrCR.AuthConnector({
+const connect = new composrCR.Connect({
+  config: myComposrConfig
+});
+```
+
+An AuthConnector instance is created and initiated automatically. This will load tokens from previous sessions (stored in local or session Storage) or fetch from the server, and set your current user authentication status in ```userAuthenticated``` property.
+
+If you wish, you can inject your own instance of AuthConnector:
+
+```javascript
+const myAuthConnectorInstance = new composrCR.AuthConnector({
   authConfig: myComposrConfig,
   options: myInstanceOptions
 });
+
+const connect = new composrCR.Connect({
+  config: myComposrConfig,
+  authConnector: myAuthConnectorInstance
+});
 ```
+
+
+#### Authentication
+
+You must use AuthConnector instance to manage your session:
+
+See [AuthConnector docs](docs/AuthConnector.md).
 
 #### Configuration
 
@@ -97,70 +120,86 @@ const myComposrConfig = {
 }}
 ```
 
-In options you can set:
-* headersExtension: This will add the headers you specify in every auth request you make.
-* authDataExtension: This will add claims you specify in every auth request you make.
-
-```javascript
-const myInstanceOptions = {
-  headersExtension: {
-    NewHeader: 'my-new-header-info'
-  },
-  authDataExtension: {
-    NewClaim: 'my-new-claims-info'
-  }
-}}
-```
-
-##### Injecting AuthRequest & AuthPersist instances
-
-In some cases (such as Meteor packages), you need to instanciate AuthRequest & AuthPersist separate from AuthConnector:
-
-```javascript
-const myAuthRequestInstance = new composrCR.AuthRequest(myComposrConfig);
-
-const myAuthPersistInstance = new composrCR.AuthPersist();
-```
-
-Now, you can inject during AuthConnector instance creation:
-
-```javascript
-const authConnector = new composrCR.AuthConnector({
-  authRequest: myAuthRequestInstance,
-  authPersist: myAuthPersistInstance,
-  options: myInstanceOptions
-});
-```
-
-Note that you load the auth config in AuthRequest instance.
-
-#### Initialization
-
-Once AuthConnector instance is created you can use ```init()``` to initiate your authentication process.
-
-```javascript
-authConnector.init()
-```
-
-This will load tokens from previous sessions (stored in local or session Storage) or fetch from the server, and set your current user authentication status in ```userAuthenticated``` property.
 
 #### API
 
-**AuthConnector**
+**Connect**
 * Methods
-  - **loginClient()**
+  - **request({method, endpoint, params, data})**
     ```javascript
-    authConnector.loginClient()
-    .then((clientToken) => console.log('My new client token:', clientToken))
-    .catch((err) => console.log('Something went wrong trying to obtain the client token:', err));
+    connect.request({
+      method: 'get',
+      endpoint: 'myEndpoint',
+      params: {
+        queryParams: {
+          id: 'myId'
+        }
+      },
+      data: {
+        myData: 'data'
+      }})
+    .then((res) => console.log('My response:', res))
+    .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
     ```
-    Application login with client scopes.
+    [desc].
 
-    Returns a *promise* with the authentication result.
+    Returns a *promise* with the request result.
 
-  - **loginUser({email, password, remember})**
+  - **get({endpoint, params})**
     ```javascript
-    authConnector.loginUser({
+    connect.get('myEndpoint', {
+        queryParams: {
+          id: 'myId'
+        }
+      })
+    .then((res) => console.log('My response:', res))
+    .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
+    ```
+    [desc].
+
+    Returns a *promise* with the request result.
+
+  - **delete({endpoint, params})**
+    ```javascript
+    connect.delete('myEndpoint', {
+        queryParams: {
+          id: 'myId'
+        }
+      })
+    .then((res) => console.log('My response:', res))
+    .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
+    ```
+    [desc].
+
+    Returns a *promise* with the request result.
+
+  - **post({endpoint, data})**
+    ```javascript
+    connect.post('myEndpoint', {
+        data: 'myData'
+      })
+    .then((res) => console.log('My response:', res))
+    .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
+    ```
+    [desc].
+
+    Returns a *promise* with the request result.
+
+  - **put({endpoint, data})**
+    ```javascript
+    connect.put('myEndpoint', {
+        data: 'myData'
+      })
+    .then((res) => console.log('My response:', res))
+    .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
+    ```
+    [desc].
+
+    Returns a *promise* with the request result.
+
+  - **authConnector.loginUser({email, password, remember})**
+    ```javascript
+    connect.authConnector.loginUser({
       email: 'myemail@myemailservice.com',
       password: 'mypass',
       remember: true
@@ -174,19 +213,9 @@ This will load tokens from previous sessions (stored in local or session Storage
 
     Returns a *promise* with the authentication result.
 
-  - **refreshUserToken()**
+  - **authConnector.logoutUser()**
     ```javascript
-    authConnector.refreshUserToken()
-    .then((accessToken) => console.log('My new user token:', userToken))
-    .catch((err) => console.log('Something went wrong trying to refresh user token:', err));
-    ```
-    Uses refreshToken stored in browser to fetch a new accessToken.
-
-    Returns a *promise* with the refresh token result.
-
-  - **logoutUser()**
-    ```javascript
-    authConnector.logoutUser()
+    connect.authConnector.logoutUser()
     .then(() => console.log('Logged out'))
     .catch((err) => console.log('Something went wrong trying to log out with server:', err));
     ```
@@ -195,31 +224,6 @@ This will load tokens from previous sessions (stored in local or session Storage
 
     Returns a *promise* with the request logout result.
     If request fails, all data in browser will be removed anyway.
-
-  - **authValidation()**
-    ```javascript
-    authConnector.authValidation()
-    .then((userToken) => console.log('Your user token:', userToken))
-    .catch(() => console.log('It was not posible to login with user scopes.'));
-    ```
-    Checks if exists a valid user session stored in browser.
-
-    Returns a *promise* that will success if there is a valid session, returning an user token.
-
-  - **getCurrentToken()**
-    ```javascript
-    authConnector.getCurrentToken()
-    .then((currentToken) => console.log('This is your current token:', currentToken))
-    .catch((err) => console.log('Something failed trying to obtain the token:', err));
-    ```
-    Checks the current token available.
-
-    Returns a *promise* that will success returning the user token if it's available, if not, returns client token.
-
-* Properties
-  - **userAuthenticated**
-
-    Returns a boolean with the user session status.
 
 ## Testing & Developing
 

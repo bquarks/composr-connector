@@ -20,13 +20,13 @@ class AuthPersist {
 
     this.sessionStorage = {
       removeItem(item) {
-        this[item] = null;
+        this[item] = void 0;
       }
     };
 
     this.localStorage = {
       removeItem(item) {
-        this[item] = null;
+        this[item] = void 0;
       }
     };
 
