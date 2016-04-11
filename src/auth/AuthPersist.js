@@ -1,5 +1,6 @@
 class AuthPersist {
   constructor(cookies = []) {
+    this._isNode();
     this.getRememberFromStorage();
     this.getTokensFromStorage();
     this.cookies = cookies;
@@ -9,6 +10,29 @@ class AuthPersist {
   // Private API //
   /////////////////
 
+  _isNode() {
+    if (window) {
+      this.sessionStorage = window.sessionStorage;
+      this.localStorage = window.localStorage;
+
+      return false;
+    }
+
+    this.sessionStorage = {
+      removeItem(item) {
+        this[item] = null;
+      }
+    };
+
+    this.localStorage = {
+      removeItem(item) {
+        this[item] = null;
+      }
+    };
+
+    return true;
+  }
+
   /**
    * Adds data to localStorage
    *
@@ -16,14 +40,14 @@ class AuthPersist {
    */
   _addLocalStorage(data) {
     if (this.remember) {
-      window.localStorage.remember = true;
-      window.localStorage.refreshToken = data.refreshToken;
+      this.localStorage.remember = true;
+      this.localStorage.refreshToken = data.refreshToken;
     }
     if (data.authOptions) {
-      window.localStorage.authOptions = JSON.stringify(data.authOptions);
+      this.localStorage.authOptions = JSON.stringify(data.authOptions);
     }
-    window.localStorage.accessToken = data.accessToken;
-    window.localStorage.expiresAt = data.expiresAt;
+    this.localStorage.accessToken = data.accessToken;
+    this.localStorage.expiresAt = data.expiresAt;
 
   }
 
@@ -35,14 +59,14 @@ class AuthPersist {
   _addSessionStorage(data) {
 
     if (this.remember) {
-      window.sessionStorage.remember = true;
+      this.sessionStorage.remember = true;
     }
     if (data.authOptions) {
-      window.sessionStorage.authOptions = JSON.stringify(data.authOptions);
+      this.sessionStorage.authOptions = JSON.stringify(data.authOptions);
     }
-    window.sessionStorage.refreshToken = data.refreshToken;
-    window.sessionStorage.accessToken = data.accessToken;
-    window.sessionStorage.expiresAt = data.expiresAt;
+    this.sessionStorage.refreshToken = data.refreshToken;
+    this.sessionStorage.accessToken = data.accessToken;
+    this.sessionStorage.expiresAt = data.expiresAt;
 
   }
 
@@ -50,22 +74,22 @@ class AuthPersist {
    * Removes auth data from localStorage
    */
   _removeLocalStorage() {
-    window.localStorage.removeItem('refreshToken');
-    window.localStorage.removeItem('accessToken');
-    window.localStorage.removeItem('expiresAt');
-    window.localStorage.removeItem('remember');
-    window.localStorage.removeItem('authOptions');
+    this.localStorage.removeItem('refreshToken');
+    this.localStorage.removeItem('accessToken');
+    this.localStorage.removeItem('expiresAt');
+    this.localStorage.removeItem('remember');
+    this.localStorage.removeItem('authOptions');
   }
 
   /**
    * Removes auth data from sessionStorage
    */
   _removeSessionStorage() {
-    window.sessionStorage.removeItem('refreshToken');
-    window.sessionStorage.removeItem('accessToken');
-    window.sessionStorage.removeItem('expiresAt');
-    window.sessionStorage.removeItem('remember');
-    window.sessionStorage.removeItem('authOptions');
+    this.sessionStorage.removeItem('refreshToken');
+    this.sessionStorage.removeItem('accessToken');
+    this.sessionStorage.removeItem('expiresAt');
+    this.sessionStorage.removeItem('remember');
+    this.sessionStorage.removeItem('authOptions');
   }
 
   _removeUserCookie(cookieName) {
@@ -79,8 +103,8 @@ class AuthPersist {
   }
 
   _getAuthOptionsFromStorage() {
-    let authOptions = window.sessionStorage.authOptions ||
-      window.localStorage.authOptions;
+    let authOptions = this.sessionStorage.authOptions ||
+      this.localStorage.authOptions;
     try {
       authOptions = JSON.parse(authOptions);
     } catch (err) {
@@ -91,13 +115,13 @@ class AuthPersist {
 
   _getUserAccessToken() {
     const sessionStorageToken = {
-      accessToken: window.sessionStorage.accessToken,
-      expiresAt: parseInt(window.sessionStorage.expiresAt)
+      accessToken: this.sessionStorage.accessToken,
+      expiresAt: parseInt(this.sessionStorage.expiresAt)
     };
 
     const localStorageToken = {
-      accessToken: window.localStorage.accessToken,
-      expiresAt: parseInt(window.localStorage.expiresAt)
+      accessToken: this.localStorage.accessToken,
+      expiresAt: parseInt(this.localStorage.expiresAt)
     };
 
     let mostRecentToken = {};
@@ -113,8 +137,8 @@ class AuthPersist {
   }
 
   _getUserTokens() {
-    const refreshToken = window.sessionStorage.refreshToken ||
-      window.localStorage.refreshToken;
+    const refreshToken = this.sessionStorage.refreshToken ||
+      this.localStorage.refreshToken;
     const {
       accessToken,
       expiresAt
@@ -129,8 +153,8 @@ class AuthPersist {
   }
 
   _getClientAccessToken() {
-    let accessToken = window.sessionStorage.clientAccessToken;;
-    let expiresAt = window.sessionStorage.clientExpiresAt;
+    let accessToken = this.sessionStorage.clientAccessToken;;
+    let expiresAt = this.sessionStorage.clientExpiresAt;
 
     return {
       accessToken,
@@ -151,8 +175,8 @@ class AuthPersist {
       expiresAt
     } = data;
 
-    window.sessionStorage.setItem('clientAccessToken', accessToken);
-    window.sessionStorage.setItem('clientExpiresAt', expiresAt);
+    this.sessionStorage.clientAccessToken = accessToken;
+    this.sessionStorage.clientExpiresAt = expiresAt;
 
     this.tokens.client = {
       accessToken,
@@ -201,8 +225,8 @@ class AuthPersist {
   }
 
   getRememberFromStorage() {
-    const remember = window.sessionStorage.getItem('remember') ||
-      window.localStorage.getItem('remember');
+    const remember = this.sessionStorage.remember ||
+      this.localStorage.remember;
 
     this.remember = (remember === 'true');
 
