@@ -1,11 +1,11 @@
 import AuthConnector from '../auth/AuthConnector';
 import * as utils from '../utils/utils';
 
-if (Meteor) {
+if (this && this.Meteor) {
   // NOTE: this only work if it is used with the meteor package version of this library.
 
-  const Headers = fetch.Headers,
-        Request = fetch.Request;
+  this.Headers = fetch.Headers;
+  this.Request = fetch.Request;
 
   fetch.Promise = Promise;
 }
