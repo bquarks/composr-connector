@@ -6,16 +6,8 @@ class AuthConnector {
   constructor({options = {}, authConfig, authPersist = new AuthPersist(), authRequest = new AuthRequest(authConfig)}) {
     this.authPersist = authPersist;
     this.authRequest = authRequest;
-    // this.options = options;
-    // TODO (Ivan): Expose utils and remove next expresion
-    this.options = {
-      headersExtension: {
-        Deviceid: 'Web-' + utils.generateUUID()
-      },
-      authDataExtension: {
-        'device_id': 'Web-' + utils.generateUUID()
-      }
-    };
+    this.options = options;
+
     this.userAuthenticated = false;
   }
 
@@ -138,21 +130,16 @@ class AuthConnector {
     const storedClientToken = this.authPersist.tokens.client;
     const currentClientAccessToken = this._validateClientAccessToken(storedClientToken);
 
-    const clientAccessTokenPromise = new Promise((resolve, reject) => {
-      // Resolve current clientToken if exists
-      if (currentClientAccessToken) {
-        resolve(currentClientAccessToken);
-        return;
-      }
+    // Resolve current clientToken if exists
+    if (currentClientAccessToken) {
+      return Promise.resolve(currentClientAccessToken);
+    }
 
-      // Ask for a new clientToken
-      this.authRequest.authenticateClient()
-        .then(res => {
-          this.authPersist.persistClientToken(res);
-          resolve(res);
-        })
-        .catch(err => reject(err));
-
+    // Ask for a new clientToken
+    const clientAccessTokenPromise = this.authRequest.authenticateClient()
+    .then(res => {
+      this.authPersist.persistClientToken(res);
+      return res;
     });
 
     this.clientAccessTokenPromise = clientAccessTokenPromise;
