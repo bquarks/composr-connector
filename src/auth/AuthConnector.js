@@ -59,7 +59,7 @@ class AuthConnector {
       clientToken.expiresAt &&
       Date.now() < parseInt(clientToken.expiresAt));
 
-    return isValid ? clientToken.accessToken : false;
+    return isValid ? clientToken : false;
 
   }
 
@@ -120,7 +120,10 @@ class AuthConnector {
       }
       return accessToken;
     })
-    .catch(() => this.loginClient());
+    .catch(() => {
+      return this.loginClient()
+      .then(res => res.accessToken);
+    });
 
     return currentTokenPromise;
   }
