@@ -1,6 +1,15 @@
 import AuthConnector from '../auth/AuthConnector';
 import * as utils from '../utils/utils';
 
+if (Meteor) {
+  // NOTE: this only work if it is used with the meteor package version of this library.
+
+  const Headers = fetch.Headers,
+        Request = fetch.Request;
+
+  fetch.Promise = Promise;
+}
+
 class Connect {
   constructor({config, authConnector = new AuthConnector({
         authConfig: config
