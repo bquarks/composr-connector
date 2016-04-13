@@ -11,12 +11,13 @@ if (this && this.Meteor) {
 }
 
 class Connect {
-  constructor({config, authConnector = new AuthConnector({
+  constructor({config, options = {}, authConnector = new AuthConnector({
         authConfig: config
       })}) {
     this.authConnector = authConnector;
     this.endpoints = config.endpoints;
     this.urlBase = config.urlBase;
+    this.options = options;
 
     this.authConnector.init();
   }
@@ -32,7 +33,7 @@ class Connect {
       'Authorization': 'Bearer ' + token
     };
 
-    let headers = Object.assign(defaultHeaders, headersExtension);
+    let headers = Object.assign(defaultHeaders, this.options.headersExtension, headersExtension);
 
     return new Headers(headers);
   }
