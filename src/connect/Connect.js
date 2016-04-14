@@ -98,17 +98,13 @@ class Connect {
       .then(utils.checkStatus);
   }
 
-  ////////////////
-  // Public API //
-  ////////////////
-
   /**
    * Send request
    *
    * @param  {Object} requestData
    * @return {Object} Promise
    */
-  request(requestData, retry = true) {
+  _request(requestData, retry = true) {
     const fetchRequest = this.authConnector.getCurrentToken()
       .then((token) => {
         const request = this._buildRequest(requestData, token);
@@ -129,6 +125,26 @@ class Connect {
       });
 
     return fetchRequest;
+  }
+
+  ////////////////
+  // Public API //
+  ////////////////
+
+  /**
+   * Send request through proxy
+   *
+   * @param  {Object} requestData
+   * @return {Object} Promise
+   */
+  request(requestData, retry = true) {
+
+    if (this.options.requestProxy) {
+      const requestProxy = this.options.requestProxy;
+      return requestProxy(this._request, requestData, retry);
+    }
+
+    return this._request(requestData, retry);
   }
 
   /**
