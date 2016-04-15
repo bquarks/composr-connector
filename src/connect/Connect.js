@@ -66,7 +66,13 @@ class Connect {
   }
 
   _buildUrl({endpoint, queryPath}) {
-    const url = utils.buildURI(this.urlBase) + this.endpoints[endpoint] + queryPath;
+    let requestEndpoint = this.endpoints[endpoint];
+
+    if (endpoint.key) {
+      requestEndpoint = this.endpoints[endpoint.key] + endpoint.id;
+    }
+
+    const url = utils.buildURI(this.urlBase) + requestEndpoint + queryPath;
 
     return url;
   }
