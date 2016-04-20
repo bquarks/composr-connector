@@ -169,11 +169,11 @@ class AuthPersist {
   /**
    * Persist client accessToken
    */
-  persistClientToken(data) {
+  persistClientToken({tokenObject}) {
     let {
       accessToken,
       expiresAt
-    } = data;
+    } = tokenObject;
 
     this.sessionStorage.clientAccessToken = accessToken;
     this.sessionStorage.clientExpiresAt = expiresAt;
@@ -189,22 +189,22 @@ class AuthPersist {
    *
    * @param  {Object} data [accessToken, refreshToken, remember]
    */
-  persistAuthData(data) {
+  persistAuthData({tokenObject}) {
     const {
       accessToken,
       refreshToken,
       expiresAt,
       authOptions
-    } = data;
+    } = tokenObject;
 
     if (this.remember) {
-      this._addLocalStorage(data);
-      this._addSessionStorage(data);
+      this._addLocalStorage(tokenObject);
+      this._addSessionStorage(tokenObject);
 
     } else {
       // Not saving in localstorage if user doesnt check remember option
       // When browser is closed, user is logged out
-      this._addSessionStorage(data);
+      this._addSessionStorage(tokenObject);
     }
 
     this.tokens.user = {

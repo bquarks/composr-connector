@@ -55,6 +55,27 @@ class AuthConnector {
 
   }
 
+  _executePromiseCb(name, promise) {
+    if (!this.options.callbacks) {
+      return;
+    }
+
+    let successCb;
+    let errorCb;
+
+    if (this.options.callbacks.success) {
+      successCb = this.options.callbacks.success[name];
+    }
+
+    if (this.options.callbacks.error) {
+      errorCb = this.options.callbacks.error[name];
+    }
+
+    promise
+    .then(successCb)
+    .catch(errorCb);
+  }
+
   ////////////////
   // Public API //
   ////////////////
@@ -114,7 +135,7 @@ class AuthConnector {
     })
     .catch(() => {
       return this.loginClient()
-      .then(res => res.accessToken);
+      .then(res => res.tokenObject.accessToken);
     });
 
     return currentTokenPromise;
@@ -142,6 +163,7 @@ class AuthConnector {
       return res;
     });
 
+    this._executePromiseCb('loginClient', clientAccessTokenPromise);
     this.clientAccessTokenPromise = clientAccessTokenPromise;
 
     return clientAccessTokenPromise;
@@ -164,13 +186,13 @@ class AuthConnector {
     });
 
     request.then(res => {
-      let tokenObject = res.tokenObject;
-      tokenObject.authOptions = this.options;
+      res.authOptions = this.options;
       this.authPersist.remember = remember ? remember : false;
-      this.authPersist.persistAuthData(tokenObject);
+      this.authPersist.persistAuthData(res);
       this.userAuthenticated = true;
     });
 
+    this._executePromiseCb('loginUser', request);
     this.loginUserPromise = request;
 
     return request;
@@ -198,6 +220,7 @@ class AuthConnector {
       this.userAuthenticated = true;
     });
 
+    this._executePromiseCb('refreshUserToken', request);
     this.refreshUserTokenPromise = request;
 
     return request;
@@ -220,8 +243,8 @@ class AuthConnector {
     });
 
     this.userAuthenticated = false;
-
     this.authPersist.removeAllUserData();
+    this._executePromiseCb('logoutUser', request);
 
     return request;
   }
