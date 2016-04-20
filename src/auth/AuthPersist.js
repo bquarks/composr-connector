@@ -169,11 +169,7 @@ class AuthPersist {
   /**
    * Persist client accessToken
    */
-  persistClientToken({tokenObject}) {
-    let {
-      accessToken,
-      expiresAt
-    } = tokenObject;
+  persistClientToken({accessToken, expiresAt}) {
 
     this.sessionStorage.clientAccessToken = accessToken;
     this.sessionStorage.clientExpiresAt = expiresAt;
@@ -187,9 +183,9 @@ class AuthPersist {
   /**
    * Stores result auth data in local & session storage
    *
-   * @param  {Object} data [accessToken, refreshToken, remember]
+   * @param  {Object} tokenObject [accessToken, refreshToken, expiresAt, authOptions]
    */
-  persistAuthData({tokenObject}) {
+  persistAuthData(tokenObject) {
     const {
       accessToken,
       refreshToken,

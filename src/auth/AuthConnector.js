@@ -55,6 +55,14 @@ class AuthConnector {
 
   }
 
+  _parseTokenObject(response) {
+    if (response.tokenObject) {
+      return response.tokenObject;
+    }
+
+    return response;
+  }
+
   _executePromiseCb(name, promise) {
     if (!this.options.callbacks) {
       return;
@@ -135,7 +143,8 @@ class AuthConnector {
     })
     .catch(() => {
       return this.loginClient()
-      .then(res => res.tokenObject.accessToken);
+      .then(this._parseTokenObject)
+      .then(res => res.accessToken);
     });
 
     return currentTokenPromise;
@@ -158,6 +167,7 @@ class AuthConnector {
 
     // Ask for a new clientToken
     const clientAccessTokenPromise = this.authRequest.authenticateClient()
+    .then(this._parseTokenObject)
     .then(res => {
       this.authPersist.persistClientToken(res);
       return res;
@@ -185,7 +195,9 @@ class AuthConnector {
       authDataExtension
     });
 
-    request.then(res => {
+    request
+    .then(this._parseTokenObject)
+    .then(res => {
       res.authOptions = this.options;
       this.authPersist.remember = remember ? remember : false;
       this.authPersist.persistAuthData(res);
@@ -215,7 +227,9 @@ class AuthConnector {
       authDataExtension
     });
 
-    request.then(res => {
+    request
+    .then(this._parseTokenObject)
+    .then(res => {
       this.authPersist.persistAuthData(res);
       this.userAuthenticated = true;
     });
