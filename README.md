@@ -116,7 +116,7 @@ const myComposrConfig = {
     "logout": "my:domain/myPhrasesVersion/logoutuser/",
     "refreshToken": "my:domain/myPhrasesVersion/refreshtoken/"
   },
-  "iamAUD": "http://my-iam-ul.io"
+  "iamAUD": "http://my-iam-url.io"
 }}
 ```
 
@@ -131,26 +131,20 @@ const myComposrConfig = {
       method: 'get',
       endpoint: 'myEndpoint',
       params: {
-        queryParams: {
-          id: 'myId'
-        }
-      },
-      data: {
-        myData: 'data'
-      }})
+          id:  'myId'
+        },
+      })
     .then((res) => console.log('My response:', res))
     .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
     ```
-    [desc].
+    Make a request to composr.
 
     Returns a *promise* with the request result.
 
   - **get({endpoint, params})**
     ```javascript
     connect.get('myEndpoint', {
-        queryParams: {
-          id: 'myId'
-        }
+        id:  'myId'
       })
     .then((res) => console.log('My response:', res))
     .catch((err) => console.log('Something went wrong trying to obtain the request:', err));
@@ -162,9 +156,7 @@ const myComposrConfig = {
   - **delete({endpoint, params})**
     ```javascript
     connect.delete('myEndpoint', {
-        queryParams: {
-          id: 'myId'
-        }
+        id:  'myId'
       })
     .then((res) => console.log('My response:', res))
     .catch((err) => console.log('Something went wrong trying to obtain the request:', err));

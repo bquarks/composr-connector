@@ -35,6 +35,7 @@ const myComposrConfig = {
 In options you can set:
 * headersExtension: This will add the headers you specify in every auth request you make.
 * authDataExtension: This will add claims you specify in every auth request you make.
+* errors: Callback functions when a login request fails.
 
 ```javascript
 const myInstanceOptions = {
@@ -43,6 +44,42 @@ const myInstanceOptions = {
   },
   authDataExtension: {
     NewClaim: 'my-new-claims-info'
+  },
+  callbacks: {
+    success: {
+      loginClient(res) {
+        console.log('Login success.', res);
+      }
+
+      loginUser(res) {
+        console.log('Login success.', res);
+      }
+
+      logoutUser(res) {
+        console.log('Logout success.', res);
+      }
+
+      refreshUserToken(res) {
+        console.log('Refresh token success.', res);
+      }
+    }
+    error: {
+      loginClient(err) {
+        console.log('An error occurred when trying to login.', err);
+      }
+
+      loginUser(err) {
+        console.log('An error occurred when trying to login.', err);
+      }
+
+      logoutUser(err) {
+        console.log('An error occurred when trying to logout.', err);
+      }
+
+      refreshUserToken(err) {
+        console.log('An error occurred when trying to refresh.', err);
+      }
+    }
   }
 }}
 ```
