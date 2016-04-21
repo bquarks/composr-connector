@@ -225,10 +225,10 @@ class AuthConnector {
       refreshToken,
       headersExtension,
       authDataExtension
-    });
+    })
+    .then(this._parseTokenObject);
 
     request
-    .then(this._parseTokenObject)
     .then(res => {
       this.authPersist.persistAuthData(res);
       this.userAuthenticated = true;
