@@ -6,6 +6,11 @@ describe('AuthPersist', () => {
   });
 
   describe('generates an instance', () => {
-    // const authPersist = new AuthPersist();
+    const authPersist = new AuthPersist();
+
+    expect(authPersist).to.not.be.undefined;
+
+    it('should ', () => {
+    });
   });
 });

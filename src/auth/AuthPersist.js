@@ -11,7 +11,9 @@ class AuthPersist {
   /////////////////
 
   _isNode() {
-    if (window) {
+    const evaluateEnvironment = new Function('try {return window;}catch(e){ return false;}');
+
+    if (evaluateEnvironment()) {
       this.sessionStorage = window.sessionStorage;
       this.localStorage = window.localStorage;
 
@@ -169,7 +171,10 @@ class AuthPersist {
   /**
    * Persist client accessToken
    */
-  persistClientToken({accessToken, expiresAt}) {
+  persistClientToken({
+    accessToken,
+    expiresAt
+  }) {
 
     this.sessionStorage.clientAccessToken = accessToken;
     this.sessionStorage.clientExpiresAt = expiresAt;
