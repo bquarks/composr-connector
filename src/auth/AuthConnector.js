@@ -193,15 +193,15 @@ class AuthConnector {
       remember,
       headersExtension,
       authDataExtension
-    });
-
-    request
+    })
     .then(this._parseTokenObject)
     .then(res => {
       res.authOptions = this.options;
       this.authPersist.remember = remember ? remember : false;
       this.authPersist.persistAuthData(res);
       this.userAuthenticated = true;
+
+      return res;
     });
 
     this._executePromiseCb('loginUser', request);
@@ -226,12 +226,12 @@ class AuthConnector {
       headersExtension,
       authDataExtension
     })
-    .then(this._parseTokenObject);
-
-    request
+    .then(this._parseTokenObject)
     .then(res => {
       this.authPersist.persistAuthData(res);
       this.userAuthenticated = true;
+
+      return res;
     });
 
     this._executePromiseCb('refreshUserToken', request);
