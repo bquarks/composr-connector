@@ -19,6 +19,8 @@ class Connect {
     this.urlBase = config.urlBase;
     this.options = options;
 
+    this._requestDataQueue = [];
+
     this.authConnector.init();
   }
 
@@ -104,6 +106,51 @@ class Connect {
       .then(utils.checkStatus);
   }
 
+  _createRetryRequests(tokenObject) {
+    const { accessToken } = tokenObject;
+    let requestDataQueue;
+    let requestsCallback;
+    let retryRequests = [];
+
+    if (this.options.retryRequestProxy) {
+      const retryRequestProxyResponse = this.options.retryRequestProxy(tokenObject, this._requestDataQueue);
+      requestDataQueue = retryRequestProxyResponse.requestDataQueue;
+      requestsCallback = retryRequestProxyResponse.requestsCallback;
+    } else {
+      requestDataQueue = this._requestDataQueue;
+      requestsCallback = (data) => data;
+    }
+
+    for (const data of requestDataQueue) {
+      const request = this._buildRequest(data, accessToken);
+
+      retryRequests.push(request);
+    }
+
+    this._requestDataQueue = [];
+
+    return Promise.all(retryRequests)
+      .then(requestsCallback);
+  }
+
+  _retry(requestData) {
+    this._requestDataQueue.push(requestData);
+
+    if (this._retryStatus === 'Pending') {
+      return this._retryRequest;
+    }
+
+    const refreshTokenPromise = this.authConnector.refreshUserToken();
+    this._retryRequest = refreshTokenPromise
+      .then((tokenObject) => this._createRetryRequests(tokenObject));
+
+    refreshTokenPromise
+      .then(() => this._retryStatus = 'Resolved')
+      .catch(() => this._retryStatus = 'Resolved');
+
+    return this._retryRequest;
+  }
+
   /**
    * Send request
    *
@@ -119,12 +166,7 @@ class Connect {
       })
       .catch((err) => {
         if (retry && err.status === 401 && this.authConnector.userAuthenticated) {
-          return this.authConnector.refreshUserToken()
-            .then(({accessToken}) => {
-              const request = this._buildRequest(requestData, accessToken);
-
-              return request;
-            });
+          return this._retry(requestData);
         }
 
         throw err;
