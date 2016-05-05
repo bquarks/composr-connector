@@ -11,7 +11,9 @@ class AuthPersist {
   /////////////////
 
   _isNode() {
-    if (window) {
+    const evaluateEnvironment = new Function('try {return window;}catch(e){ return false;}');
+
+    if (evaluateEnvironment()) {
       this.sessionStorage = window.sessionStorage;
       this.localStorage = window.localStorage;
 
@@ -169,11 +171,10 @@ class AuthPersist {
   /**
    * Persist client accessToken
    */
-  persistClientToken(data) {
-    let {
-      accessToken,
-      expiresAt
-    } = data;
+  persistClientToken({
+    accessToken,
+    expiresAt
+  }) {
 
     this.sessionStorage.clientAccessToken = accessToken;
     this.sessionStorage.clientExpiresAt = expiresAt;
@@ -187,24 +188,24 @@ class AuthPersist {
   /**
    * Stores result auth data in local & session storage
    *
-   * @param  {Object} data [accessToken, refreshToken, remember]
+   * @param  {Object} tokenObject [accessToken, refreshToken, expiresAt, authOptions]
    */
-  persistAuthData(data) {
+  persistAuthData(tokenObject) {
     const {
       accessToken,
       refreshToken,
       expiresAt,
       authOptions
-    } = data;
+    } = tokenObject;
 
     if (this.remember) {
-      this._addLocalStorage(data);
-      this._addSessionStorage(data);
+      this._addLocalStorage(tokenObject);
+      this._addSessionStorage(tokenObject);
 
     } else {
       // Not saving in localstorage if user doesnt check remember option
       // When browser is closed, user is logged out
-      this._addSessionStorage(data);
+      this._addSessionStorage(tokenObject);
     }
 
     this.tokens.user = {

@@ -6,7 +6,7 @@ export function buildURI(urlBase) {
 
 export function checkStatus(response) {
   if (response.ok) {
-    return response.json();
+    return response.json().catch(() => response);
   }
 
   let error = new Error(response.statusText);

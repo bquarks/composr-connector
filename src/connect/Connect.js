@@ -1,22 +1,25 @@
 import AuthConnector from '../auth/AuthConnector';
 import * as utils from '../utils/utils';
 
-if (Meteor) {
+if (this && this.Meteor) {
   // NOTE: this only work if it is used with the meteor package version of this library.
 
-  const Headers = fetch.Headers,
-        Request = fetch.Request;
+  this.Headers = fetch.Headers;
+  this.Request = fetch.Request;
 
   fetch.Promise = Promise;
 }
 
 class Connect {
-  constructor({config, authConnector = new AuthConnector({
+  constructor({config, options = {}, authConnector = new AuthConnector({
         authConfig: config
       })}) {
     this.authConnector = authConnector;
     this.endpoints = config.endpoints;
     this.urlBase = config.urlBase;
+    this.options = options;
+
+    this._requestDataQueue = [];
 
     this.authConnector.init();
   }
@@ -32,7 +35,7 @@ class Connect {
       'Authorization': 'Bearer ' + token
     };
 
-    let headers = Object.assign(defaultHeaders, headersExtension);
+    let headers = Object.assign(defaultHeaders, this.options.headersExtension, headersExtension);
 
     return new Headers(headers);
   }
@@ -65,7 +68,13 @@ class Connect {
   }
 
   _buildUrl({endpoint, queryPath}) {
-    const url = utils.buildURI(this.urlBase) + this.endpoints[endpoint] + queryPath;
+    let requestEndpoint = this.endpoints[endpoint];
+
+    if (endpoint.key) {
+      requestEndpoint = this.endpoints[endpoint.key] + endpoint.id;
+    }
+
+    const url = utils.buildURI(this.urlBase) + requestEndpoint + queryPath;
 
     return url;
   }
@@ -97,9 +106,50 @@ class Connect {
       .then(utils.checkStatus);
   }
 
-  ////////////////
-  // Public API //
-  ////////////////
+  _createRetryRequests(tokenObject) {
+    const { accessToken } = tokenObject;
+    let requestDataQueue;
+    let requestsCallback;
+    let retryRequests = [];
+
+    if (this.options.retryRequestProxy) {
+      const retryRequestProxyResponse = this.options.retryRequestProxy(tokenObject, this._requestDataQueue);
+      requestDataQueue = retryRequestProxyResponse.requestDataQueue;
+      requestsCallback = retryRequestProxyResponse.requestsCallback;
+    } else {
+      requestDataQueue = this._requestDataQueue;
+      requestsCallback = (data) => data;
+    }
+
+    for (const data of requestDataQueue) {
+      const request = this._buildRequest(data, accessToken);
+
+      retryRequests.push(request);
+    }
+
+    this._requestDataQueue = [];
+
+    return Promise.all(retryRequests)
+      .then(requestsCallback);
+  }
+
+  _retry(requestData) {
+    this._requestDataQueue.push(requestData);
+
+    if (this._retryStatus === 'Pending') {
+      return this._retryRequest;
+    }
+
+    const refreshTokenPromise = this.authConnector.refreshUserToken();
+    this._retryRequest = refreshTokenPromise
+      .then((tokenObject) => this._createRetryRequests(tokenObject));
+
+    refreshTokenPromise
+      .then(() => this._retryStatus = 'Resolved')
+      .catch(() => this._retryStatus = 'Resolved');
+
+    return this._retryRequest;
+  }
 
   /**
    * Send request
@@ -107,7 +157,7 @@ class Connect {
    * @param  {Object} requestData
    * @return {Object} Promise
    */
-  request(requestData, retry = true) {
+  _request(requestData, retry = true) {
     const fetchRequest = this.authConnector.getCurrentToken()
       .then((token) => {
         const request = this._buildRequest(requestData, token);
@@ -116,18 +166,33 @@ class Connect {
       })
       .catch((err) => {
         if (retry && err.status === 401 && this.authConnector.userAuthenticated) {
-          return this.authConnector.refreshUserToken()
-            .then(({accessToken}) => {
-              const request = this._buildRequest(requestData, accessToken);
-
-              return request;
-            });
+          return this._retry(requestData);
         }
 
         throw err;
       });
 
     return fetchRequest;
+  }
+
+  ////////////////
+  // Public API //
+  ////////////////
+
+  /**
+   * Send request through proxy
+   *
+   * @param  {Object} requestData
+   * @return {Object} Promise
+   */
+  request(requestData, retry = true) {
+
+    if (this.options.requestProxy) {
+      const requestProxy = this.options.requestProxy;
+      return requestProxy(this._request, requestData, retry);
+    }
+
+    return this._request(requestData, retry);
   }
 
   /**
