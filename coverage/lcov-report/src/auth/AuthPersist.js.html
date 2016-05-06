@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/auth/AuthPersist.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">src/auth/</a> AuthPersist.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">96.03% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>121/126</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">82.61% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>38/46</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>24/24</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">93.83% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>76/81</span>
+      </div>
+      <div class='fl pad1y'>
+        <span class="strong">7 statements, 1 function, 7 branches</span>
+        <span class="quiet">Ignored</span>  &nbsp;&nbsp;&nbsp;&nbsp;
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">class AuthPersist {
+  constructor(<span class="branch-1 cbranch-no" title="branch not covered" >c</span>ookies = <span class="branch-1 cbranch-no" title="branch not covered" >[</span>]) {
+    this._isNode();
+    this.getRememberFromStorage();
+    this.getTokensFromStorage();
+    this.cookies = cookies;
+  }
+&nbsp;
+  /////////////////
+  // Private API //
+  /////////////////
+&nbsp;
+  _isNode() {
+    const evaluateEnvironment = new Function('try {return window;}catch(e){ return false;}');
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (evaluateEnvironment()) {
+<span class="cstat-no" title="statement not covered" >      this.sessionStorage = window.sessionStorage;</span>
+<span class="cstat-no" title="statement not covered" >      this.localStorage = window.localStorage;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+&nbsp;
+    this.sessionStorage = {
+      removeItem(item) {
+        this[item] = void 0;
+      }
+    };
+&nbsp;
+    this.localStorage = {
+      removeItem(item) {
+        this[item] = void 0;
+      }
+    };
+&nbsp;
+    return true;
+  }
+&nbsp;
+  /**
+   * Adds data to localStorage
+   *
+   * @param {Object} data
+   */
+  _addLocalStorage(data) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.remember) {
+      this.localStorage.remember = true;
+      this.localStorage.refreshToken = data.refreshToken;
+    }
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (data.authOptions) {
+      this.localStorage.authOptions = JSON.stringify(data.authOptions);
+    }
+    this.localStorage.accessToken = data.accessToken;
+    this.localStorage.expiresAt = data.expiresAt;
+&nbsp;
+  }
+&nbsp;
+  /**
+   * Adds data to sessionStorage
+   *
+   * @param {Object} data
+   */
+  _addSessionStorage(data) {
+&nbsp;
+    if (this.remember) {
+      this.sessionStorage.remember = true;
+    }
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (data.authOptions) {
+      this.sessionStorage.authOptions = JSON.stringify(data.authOptions);
+    }
+    this.sessionStorage.refreshToken = data.refreshToken;
+    this.sessionStorage.accessToken = data.accessToken;
+    this.sessionStorage.expiresAt = data.expiresAt;
+&nbsp;
+  }
+&nbsp;
+  /**
+   * Removes auth data from localStorage
+   */
+  _removeLocalStorage() {
+    this.localStorage.removeItem('refreshToken');
+    this.localStorage.removeItem('accessToken');
+    this.localStorage.removeItem('expiresAt');
+    this.localStorage.removeItem('remember');
+    this.localStorage.removeItem('authOptions');
+  }
+&nbsp;
+  /**
+   * Removes auth data from sessionStorage
+   */
+  _removeSessionStorage() {
+    this.sessionStorage.removeItem('refreshToken');
+    this.sessionStorage.removeItem('accessToken');
+    this.sessionStorage.removeItem('expiresAt');
+    this.sessionStorage.removeItem('remember');
+    this.sessionStorage.removeItem('authOptions');
+  }
+&nbsp;
+  _removeUserCookie(cookieName) {
+<span class="cstat-no" title="statement not covered" >    document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';</span>
+  }
+&nbsp;
+  _removeUserCookies() {
+    for (const cookie of this.cookies) {
+<span class="cstat-no" title="statement not covered" >      this._removeUserCookie(cookie);</span>
+    }
+  }
+&nbsp;
+  _getAuthOptionsFromStorage() {
+    let authOptions = this.sessionStorage.authOptions ||
+      this.localStorage.authOptions;
+    try {
+      authOptions = JSON.parse(authOptions);
+    } catch (err) {
+      authOptions = {};
+    }
+    return authOptions;
+  }
+&nbsp;
+  _getUserAccessToken() {
+    const sessionStorageToken = {
+      accessToken: this.sessionStorage.accessToken,
+      expiresAt: parseInt(this.sessionStorage.expiresAt)
+    };
+&nbsp;
+    const localStorageToken = {
+      accessToken: this.localStorage.accessToken,
+      expiresAt: parseInt(this.localStorage.expiresAt)
+    };
+&nbsp;
+    let mostRecentToken = {};
+&nbsp;
+    if (!isNaN(sessionStorageToken.expiresAt) &amp;&amp; !isNaN(localStorageToken.expiresAt)) {
+      mostRecentToken = s</span>essionStorageToken.expiresAt &gt; localStorageToken.expiresAt ? <span class="branch-0 cbranch-no" title="branch not covered" >sessionStorageToken : localStorageToken;
+      return mostRecentToken;
+    }
+&nbsp;
+    mostRecentToken = i</span>sNaN(sessionStorageToken.expiresAt) ? localStorageToken : <span class="branch-1 cbranch-no" title="branch not covered" >sessionStorageToken;
+&nbsp;
+    return mostRecentToken;
+  }
+&nbsp;
+  _getUserTokens() {
+    const refreshToken = this.sessionStorage.refreshToken ||
+      this.localStorage.refreshToken;
+    const {
+      accessToken,
+      expiresAt
+    } = this._getUserAccessToken();
+    const userTokens = {
+      refreshToken,
+      accessToken,
+      expiresAt
+    };
+&nbsp;
+    return userTokens;
+  }
+&nbsp;
+  _getClientAccessToken() {
+    let accessToken = this.sessionStorage.clientAccessToken;;
+    let expiresAt = this.sessionStorage.clientExpiresAt;
+&nbsp;
+    return {
+      accessToken,
+      expiresAt
+    };
+  }
+&nbsp;
+  ////////////////
+  // Public API //
+  ////////////////
+&nbsp;
+  /**
+   * Persist client accessToken
+   */
+  persistClientToken({
+    accessToken,
+    expiresAt
+  }) {
+&nbsp;
+    this.sessionStorage.clientAccessToken = accessToken;
+    this.sessionStorage.clientExpiresAt = expiresAt;
+&nbsp;
+    this.tokens.client = {
+      accessToken,
+      expiresAt
+    };
+  }
+&nbsp;
+  /**
+   * Stores result auth data in local &amp; session storage
+   *
+   * @param  {Object} tokenObject [accessToken, refreshToken, expiresAt, authOptions]
+   */
+  persistAuthData(tokenObject) {
+    const {
+      accessToken,
+      refreshToken,
+      expiresAt,
+      authOptions
+    } = tokenObject;
+&nbsp;
+    if (this.remember) {
+      this._addLocalStorage(tokenObject);
+      this._addSessionStorage(tokenObject);
+&nbsp;
+    } else {
+      // Not saving in localstorage if user doesnt check remember option
+      // When browser is closed, user is logged out
+      this._addSessionStorage(tokenObject);
+    }
+&nbsp;
+    this.tokens.user = {
+      accessToken,
+      refreshToken,
+      expiresAt
+    };
+&nbsp;
+    this.tokens.authOptions = authOptions;
+&nbsp;
+    return true;
+  }
+&nbsp;
+  removeAllUserData() {
+    this._removeLocalStorage();
+    this._removeSessionStorage();
+    this._removeUserCookies();
+  }
+&nbsp;
+  getRememberFromStorage() {
+    const remember = this.sessionStorage.remember ||
+      this.localStorage.remember;
+&nbsp;
+    this.remember = (remember === 'true');
+&nbsp;
+    return this.remember;
+  }
+&nbsp;
+  getTokensFromStorage() {
+    let tokens = {
+      client: this._getClientAccessToken(),
+      user: this._getUserTokens(),
+      authOptions: this._getAuthOptionsFromStorage()
+    };
+    this.tokens = tokens;
+&nbsp;
+    return tokens;
+  }
+}
+&nbsp;
+export default AuthPersist;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Apr 21 2016 17:49:57 GMT+0200 (CEST)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>
