@@ -99,7 +99,16 @@ class AuthPersist {
   }
 
   _removeUserCookies() {
-    for (const cookie of this.cookies) {
+    // TODO: Due to an issue with ios 8 or lower versions
+    //  it's better to use for..in loops instead for..of
+    //
+    // Replace following lines in projects without support for this browsers:
+    //
+    // for (const cookie of this.cookies) {
+    //   this._removeUserCookie(cookie);
+    // }
+    for (let i in this.cookies) {
+      const cookie = this.cookies[i];
       this._removeUserCookie(cookie);
     }
   }

@@ -121,7 +121,18 @@ class Connect {
       requestsCallback = (data) => data;
     }
 
-    for (const data of requestDataQueue) {
+    // TODO: Due to an issue with ios 8 or lower versions
+    //  it's better to use for..in loops instead for..of
+    //
+    // Replace following lines in projects without support for this browsers:
+    //
+    // for (const data of requestDataQueue) {
+    //   const request = this._buildRequest(data, accessToken);
+    //
+    //   retryRequests.push(request);
+    // }
+    for (let i in requestDataQueue) {
+      const data = requestDataQueue[i];
       const request = this._buildRequest(data, accessToken);
 
       retryRequests.push(request);
