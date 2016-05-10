@@ -688,7 +688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var headersInstance = new Headers(authenticationHeaders);
 	
 	      var request = new Request(url, {
-	        credentials: 'same-origin',
+	        credentials: 'include',
 	        mode: 'cors',
 	        cache: 'no-store',
 	        method: 'POST',
@@ -939,29 +939,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_removeUserCookies',
 	    value: function _removeUserCookies() {
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-	
-	      try {
-	        for (var _iterator = this.cookies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var cookie = _step.value;
-	
-	          this._removeUserCookie(cookie);
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
+	      // TODO: Due to an issue with ios 8 or lower versions
+	      //  it's better to use for..in loops instead for..of
+	      //
+	      // Replace following lines in projects without support for this browsers:
+	      //
+	      // for (const cookie of this.cookies) {
+	      //   this._removeUserCookie(cookie);
+	      // }
+	      for (var i in this.cookies) {
+	        var cookie = this.cookies[i];
+	        this._removeUserCookie(cookie);
 	      }
 	    }
 	  }, {
@@ -1635,7 +1623,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	
 	      var request = new Request(url, {
-	        credentials: 'same-origin',
+	        credentials: 'include',
 	        mode: 'cors',
 	        cache: 'no-store',
 	        method: method,
@@ -1665,31 +1653,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	      }
 	
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
+	      // TODO: Due to an issue with ios 8 or lower versions
+	      //  it's better to use for..in loops instead for..of
+	      //
+	      // Replace following lines in projects without support for this browsers:
+	      //
+	      // for (const data of requestDataQueue) {
+	      //   const request = this._buildRequest(data, accessToken);
+	      //
+	      //   retryRequests.push(request);
+	      // }
+	      for (var i in requestDataQueue) {
+	        var data = requestDataQueue[i];
+	        var request = this._buildRequest(data, accessToken);
 	
-	      try {
-	        for (var _iterator = requestDataQueue[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var data = _step.value;
-	
-	          var request = this._buildRequest(data, accessToken);
-	
-	          retryRequests.push(request);
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
+	        retryRequests.push(request);
 	      }
 	
 	      this._requestDataQueue = [];
