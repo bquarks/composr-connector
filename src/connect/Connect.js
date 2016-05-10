@@ -94,7 +94,7 @@ class Connect {
     });
 
     const request = new Request(url, {
-      credentials: 'same-origin',
+      credentials: 'include',
       mode: 'cors',
       cache: 'no-store',
       method,
