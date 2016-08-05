@@ -62,6 +62,12 @@ class AuthConnector {
 
   }
 
+  /**
+   * Parse token object when comes inside another object
+   *
+   * @param  {Object} response Request response object
+   * @return {Object}          Token object
+   */
   _parseTokenObject(response) {
     if (response.tokenObject) {
       return response.tokenObject;
@@ -70,7 +76,16 @@ class AuthConnector {
     return response;
   }
 
+  /**
+   * Execute optional callbacks
+   *
+   * @param  {String} name    Name of the event
+   * @param  {Object} promise Unresolved event promise
+   */
   _executePromiseCb(name, promise) {
+
+    this._publishEvent(name, promise);
+
     if (!this.options.callbacks) {
       return;
     }
@@ -89,6 +104,28 @@ class AuthConnector {
     promise
     .then(successCb)
     .catch(errorCb);
+  }
+
+  /**
+   * Publish events when promises are resolved (use it instead callbacks)
+   *
+   * @param  {String} name  Name of the event
+   * @param  {Object} promise Unresolved event promise
+   */
+  _publishEvent(name, promise) {
+    promise
+    .then((res) => {
+      utils.events.publish(name, {
+        result: 'success',
+        response: res
+      });
+    })
+    .catch((err) => {
+      utils.events.publish(name, {
+        result: 'error',
+        response: err
+      });
+    });
   }
 
   ////////////////
@@ -132,7 +169,7 @@ class AuthConnector {
     return validationRequest;
   }
 
- /**
+  /**
   * Dispatch user accessToken if it's available, if not, dispatch client accessToken
   *
   * @return {Object} Promise
