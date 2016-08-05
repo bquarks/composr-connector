@@ -1,4 +1,5 @@
 import * as jwt from './jwt';
+export * from './events';
 
 export function buildURI(urlBase) {
   return urlBase.replace('{{module}}', 'composr');
@@ -26,4 +27,6 @@ export function generateUUID() {
   return uuid;
 }
 
-export { jwt };
+export {
+  jwt
+ };

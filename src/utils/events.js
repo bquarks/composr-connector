@@ -4,7 +4,7 @@
 let topics = {};
 let hOP = topics.hasOwnProperty;
 
-const events = {
+export const events = {
   subscribe: function(topic, listener) {
     // Create the topic's object if not yet created
     if (!hOP.call(topics, topic)) {
@@ -32,8 +32,4 @@ const events = {
       item(info != undefined ? info : {});
     });
   }
-};
-
-export {
-  events
 };
