@@ -7,13 +7,20 @@ class AuthConnector {
     this.authPersist = authPersist;
     this.authRequest = authRequest;
     this.options = options;
-
     this.userAuthenticated = false;
   }
 
   /////////////////
   // Private API //
   /////////////////
+
+  /**
+   * Set authentication status and dispatch an event
+   */
+  _setAuthentication(auth) {
+    utils.events.publish('userAuthenticated', auth);
+    this.userAuthenticated = auth;
+  }
 
   /**
    * Validates accesstoken and refresh if it's necessary
@@ -96,8 +103,8 @@ class AuthConnector {
   init() {
     this.loginClient();
     this.authValidation()
-      .then(() => this.userAuthenticated = true)
-      .catch(() => this.userAuthenticated = false);
+      .then(() => this._setAuthentication(true))
+      .catch(() => this._setAuthentication(false));
   }
 
   /**
@@ -137,7 +144,7 @@ class AuthConnector {
     .then(() => {
       const accessToken = this.authPersist.tokens.user.accessToken;
       if (accessToken && this.userAuthenticated === false) {
-        this.userAuthenticated = true;
+        this._setAuthentication(true);
       }
       return accessToken;
     })
@@ -193,13 +200,15 @@ class AuthConnector {
       remember,
       headersExtension,
       authDataExtension
-    })
+    });
+
+    request
     .then(this._parseTokenObject)
     .then(res => {
       res.authOptions = this.options;
       this.authPersist.remember = remember ? remember : false;
       this.authPersist.persistAuthData(res);
-      this.userAuthenticated = true;
+      this._setAuthentication(true);
 
       return res;
     });
@@ -229,7 +238,7 @@ class AuthConnector {
     .then(this._parseTokenObject)
     .then(res => {
       this.authPersist.persistAuthData(res);
-      this.userAuthenticated = true;
+      this._setAuthentication(true);
 
       return res;
     });
@@ -256,7 +265,7 @@ class AuthConnector {
       authDataExtension
     });
 
-    this.userAuthenticated = false;
+    this._setAuthentication(false);
     this.authPersist.removeAllUserData();
     this._executePromiseCb('logoutUser', request);
 
