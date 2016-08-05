@@ -151,6 +151,8 @@ class Connect {
       return this._retryRequest;
     }
 
+    this._retryStatus = 'Pending';
+
     const refreshTokenPromise = this.authConnector.refreshUserToken();
     this._retryRequest = refreshTokenPromise
       .then((tokenObject) => this._createRetryRequests(tokenObject));
