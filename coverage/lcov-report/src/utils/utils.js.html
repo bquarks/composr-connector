@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">61.76% </span>
+        <span class="strong">60.98% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>21/34</span>
+        <span class='fraction'>25/41</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">66.67% </span>
+        <span class="strong">68.75% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>8/12</span>
+        <span class='fraction'>11/16</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">20% </span>
+        <span class="strong">25% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>1/5</span>
+        <span class='fraction'>2/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">27.78% </span>
+        <span class="strong">31.58% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>5/18</span>
+        <span class='fraction'>6/19</span>
       </div>
       <div class='fl pad1y'>
         <span class="strong">7 statements, 5 branches</span>
@@ -76,7 +76,11 @@
 27
 28
 29
-30</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+30
+31
+32
+33</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -102,45 +106,50 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as jwt from './jwt';
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="missing-if-branch" title="if path not taken" >I</span>e</span></span></span>xport * from './events';
 &nbsp;
 export <span class="fstat-no" title="function not covered" >function buildURI(urlBase) {</span>
-<span class="cstat-no" title="statement not covered" >  return urlBase.replace('{{module}}', 'composr');</span>
+<span class="cstat-no" title="statement not covered" >  r</span>eturn urlBase.replace('{{module}}', 'composr');
 }
 &nbsp;
 export <span class="fstat-no" title="function not covered" >function checkStatus(response) {</span>
-<span class="cstat-no" title="statement not covered" >  i</span>f (response.ok) {
-<span class="cstat-no" title="statement not covered" >    return response.json();</span>
+<span class="cstat-no" title="statement not covered" >  if (response.ok) {</span>
+<span class="cstat-no" title="statement not covered" >    r</span>eturn response.json().catch(<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>) =&gt; response);
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  let error = new Error(response.statusText);</span>
-<span class="cstat-no" title="statement not covered" >  error.status = response.status;</span>
-<span class="cstat-no" title="statement not covered" >  error.response = response;</span>
-<span class="cstat-no" title="statement not covered" >  throw error;</span>
+<span class="cstat-no" title="statement not covered" >  l</span>et error = new Error(response.statusText);
+<span class="cstat-no" title="statement not covered" >  e</span>rror.status = response.status;
+<span class="cstat-no" title="statement not covered" >  e</span>rror.response = response;
+<span class="cstat-no" title="statement not covered" >  t</span>hrow error;
 &nbsp;
 }
 &nbsp;
 export <span class="fstat-no" title="function not covered" >function generateUUID() {</span>
-<span class="cstat-no" title="statement not covered" >  let d = new Date().getTime();</span>
-<span class="cstat-no" title="statement not covered" >  let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, <span class="fstat-no" title="function not covered" >function(c) {</span></span>
-<span class="cstat-no" title="statement not covered" >    let r = (d + Math.random() * 16) % 16 | 0;</span>
-<span class="cstat-no" title="statement not covered" >    d = Math.floor(d / 16);</span>
-<span class="cstat-no" title="statement not covered" >    return (c == 'x' ? r : (r &amp; 0x3 | 0x8)).toString(16);</span>
+<span class="cstat-no" title="statement not covered" >  l</span>et d = new Date().getTime();
+<span class="cstat-no" title="statement not covered" >  l</span>et uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, <span class="fstat-no" title="function not covered" >function(c) {</span>
+<span class="cstat-no" title="statement not covered" >    l</span>et r = (d + Math.random() * 16) % 16 | 0;
+<span class="cstat-no" title="statement not covered" >    d</span> = Math.floor(d / 16);
+<span class="cstat-no" title="statement not covered" >    r</span>eturn (c == 'x' ? r : (r &amp; 0x3 | 0x8)).toString(16);
   });
-<span class="cstat-no" title="statement not covered" >  return uuid;</span>
+<span class="cstat-no" title="statement not covered" >  r</span>eturn uuid;
 }
 &nbsp;
-export { jwt };
+export {
+  jwt
+ };
 &nbsp;</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Apr 21 2016 17:49:57 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Aug 08 2016 14:29:33 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../../prettify.js"></script>

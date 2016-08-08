@@ -63,7 +63,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _utils = __webpack_require__(1);
 	
 	Object.keys(_utils).forEach(function (key) {
-	  if (key === "default") return;
+	  if (key === "default" || key === "__esModule") return;
 	  Object.defineProperty(exports, key, {
 	    enumerable: true,
 	    get: function get() {
@@ -72,7 +72,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 	});
 	
-	var _AuthRequest = __webpack_require__(4);
+	var _AuthRequest = __webpack_require__(5);
 	
 	Object.defineProperty(exports, 'AuthRequest', {
 	  enumerable: true,
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _AuthPersist = __webpack_require__(5);
+	var _AuthPersist = __webpack_require__(6);
 	
 	Object.defineProperty(exports, 'AuthPersist', {
 	  enumerable: true,
@@ -90,7 +90,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _AuthConnector = __webpack_require__(6);
+	var _AuthConnector = __webpack_require__(7);
 	
 	Object.defineProperty(exports, 'AuthConnector', {
 	  enumerable: true,
@@ -99,7 +99,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _Connect = __webpack_require__(7);
+	var _Connect = __webpack_require__(8);
 	
 	Object.defineProperty(exports, 'Connect', {
 	  enumerable: true,
@@ -120,11 +120,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	exports.jwt = undefined;
+	
+	var _events = __webpack_require__(2);
+	
+	Object.keys(_events).forEach(function (key) {
+	  if (key === "default" || key === "__esModule") return;
+	  Object.defineProperty(exports, key, {
+	    enumerable: true,
+	    get: function get() {
+	      return _events[key];
+	    }
+	  });
+	});
 	exports.buildURI = buildURI;
 	exports.checkStatus = checkStatus;
 	exports.generateUUID = generateUUID;
 	
-	var _jwt = __webpack_require__(2);
+	var _jwt = __webpack_require__(3);
 	
 	var jwt = _interopRequireWildcard(_jwt);
 	
@@ -161,6 +173,51 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	// Based on David Walsh's pub-sub implementation
+	// https://davidwalsh.name/pubsub-javascript
+	
+	var topics = {};
+	var hOP = topics.hasOwnProperty;
+	
+	var events = exports.events = {
+	  subscribe: function subscribe(topic, listener) {
+	    // Create the topic's object if not yet created
+	    if (!hOP.call(topics, topic)) {
+	      topics[topic] = [];
+	    }
+	
+	    // Add the listener to queue
+	    var index = topics[topic].push(listener) - 1;
+	
+	    // Provide handle back for removal of topic
+	    return {
+	      remove: function remove() {
+	        delete topics[topic][index];
+	      }
+	    };
+	  },
+	  publish: function publish(topic, info) {
+	    // If the topic doesn't exist, or there's no listeners in queue, just leave
+	    if (!hOP.call(topics, topic)) {
+	      return;
+	    }
+	
+	    // Cycle through topics queue, fire!
+	    topics[topic].forEach(function (item) {
+	      item(info != undefined ? info : {});
+	    });
+	  }
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -171,7 +228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.generate = generate;
 	exports.decode = decode;
 	
-	var _cryptography = __webpack_require__(3);
+	var _cryptography = __webpack_require__(4);
 	
 	var cryptography = _interopRequireWildcard(_cryptography);
 	
@@ -275,7 +332,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -569,7 +626,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* jshint ignore:end */
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -807,7 +864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = AuthRequest;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -911,11 +968,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_removeLocalStorage',
 	    value: function _removeLocalStorage() {
-	      this.localStorage.removeItem('refreshToken');
-	      this.localStorage.removeItem('accessToken');
-	      this.localStorage.removeItem('expiresAt');
-	      this.localStorage.removeItem('remember');
-	      this.localStorage.removeItem('authOptions');
+	      var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+	
+	      for (var i in items) {
+	        this.localStorage.removeItem(items[i]);
+	      }
 	    }
 	
 	    /**
@@ -925,11 +982,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_removeSessionStorage',
 	    value: function _removeSessionStorage() {
-	      this.sessionStorage.removeItem('refreshToken');
-	      this.sessionStorage.removeItem('accessToken');
-	      this.sessionStorage.removeItem('expiresAt');
-	      this.sessionStorage.removeItem('remember');
-	      this.sessionStorage.removeItem('authOptions');
+	      var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+	
+	      for (var i in items) {
+	        this.sessionStorage.removeItem(items[i]);
+	      }
 	    }
 	  }, {
 	    key: '_removeUserCookie',
@@ -1111,7 +1168,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = AuthPersist;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1122,11 +1179,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _AuthRequest = __webpack_require__(4);
+	var _AuthRequest = __webpack_require__(5);
 	
 	var _AuthRequest2 = _interopRequireDefault(_AuthRequest);
 	
-	var _AuthPersist = __webpack_require__(5);
+	var _AuthPersist = __webpack_require__(6);
 	
 	var _AuthPersist2 = _interopRequireDefault(_AuthPersist);
 	
@@ -1155,7 +1212,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.authPersist = authPersist;
 	    this.authRequest = authRequest;
 	    this.options = options;
-	
 	    this.userAuthenticated = false;
 	  }
 	
@@ -1164,11 +1220,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /////////////////
 	
 	  /**
-	   * Validates accesstoken and refresh if it's necessary
+	   * Set authentication status and dispatch an event
 	   */
 	
 	
 	  _createClass(AuthConnector, [{
+	    key: '_setAuthentication',
+	    value: function _setAuthentication(auth) {
+	      utils.events.publish('userAuthenticated', auth);
+	      this.userAuthenticated = auth;
+	    }
+	
+	    /**
+	     * Validates accesstoken and refresh if it's necessary
+	     */
+	
+	  }, {
 	    key: '_validateAccessToken',
 	    value: function _validateAccessToken() {
 	      this.authPersist.getTokensFromStorage();
@@ -1209,6 +1276,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      return isValid ? clientToken : false;
 	    }
+	
+	    /**
+	     * Parse token object when comes inside another object
+	     *
+	     * @param  {Object} response Request response object
+	     * @return {Object}          Token object
+	     */
+	
 	  }, {
 	    key: '_parseTokenObject',
 	    value: function _parseTokenObject(response) {
@@ -1218,9 +1293,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      return response;
 	    }
+	
+	    /**
+	     * Execute optional callbacks
+	     *
+	     * @param  {String} name    Name of the event
+	     * @param  {Object} promise Unresolved event promise
+	     */
+	
 	  }, {
 	    key: '_executePromiseCb',
 	    value: function _executePromiseCb(name, promise) {
+	
+	      this._publishEvent(name, promise);
+	
 	      if (!this.options.callbacks) {
 	        return;
 	      }
@@ -1237,6 +1323,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      promise.then(successCb).catch(errorCb);
+	    }
+	
+	    /**
+	     * Publish events when promises are resolved (use it instead callbacks)
+	     *
+	     * @param  {String} name  Name of the event
+	     * @param  {Object} promise Unresolved event promise
+	     */
+	
+	  }, {
+	    key: '_publishEvent',
+	    value: function _publishEvent(name, promise) {
+	      promise.then(function (res) {
+	        utils.events.publish(name, {
+	          result: 'success',
+	          response: res
+	        });
+	      }).catch(function (err) {
+	        utils.events.publish(name, {
+	          result: 'error',
+	          response: err
+	        });
+	      });
 	    }
 	
 	    ////////////////
@@ -1256,9 +1365,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      this.loginClient();
 	      this.authValidation().then(function () {
-	        return _this.userAuthenticated = true;
+	        return _this._setAuthentication(true);
 	      }).catch(function () {
-	        return _this.userAuthenticated = false;
+	        return _this._setAuthentication(false);
 	      });
 	    }
 	
@@ -1295,10 +1404,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * Dispatch user accessToken if it's available, if not, dispatch client accessToken
-	     *
-	     * @return {Object} Promise
-	     */
+	    * Dispatch user accessToken if it's available, if not, dispatch client accessToken
+	    *
+	    * @return {Object} Promise
+	    */
 	
 	  }, {
 	    key: 'getCurrentToken',
@@ -1310,7 +1419,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var currentTokenPromise = this.authValidation().then(function () {
 	        var accessToken = _this3.authPersist.tokens.user.accessToken;
 	        if (accessToken && _this3.userAuthenticated === false) {
-	          _this3.userAuthenticated = true;
+	          _this3._setAuthentication(true);
 	        }
 	        return accessToken;
 	      }).catch(function () {
@@ -1385,7 +1494,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        res.authOptions = _this5.options;
 	        _this5.authPersist.remember = remember ? remember : false;
 	        _this5.authPersist.persistAuthData(res);
-	        _this5.userAuthenticated = true;
+	        _this5._setAuthentication(true);
 	
 	        return res;
 	      });
@@ -1423,7 +1532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        authDataExtension: authDataExtension
 	      }).then(this._parseTokenObject).then(function (res) {
 	        _this6.authPersist.persistAuthData(res);
-	        _this6.userAuthenticated = true;
+	        _this6._setAuthentication(true);
 	
 	        return res;
 	      });
@@ -1458,7 +1567,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        authDataExtension: authDataExtension
 	      });
 	
-	      this.userAuthenticated = false;
+	      this._setAuthentication(false);
 	      this.authPersist.removeAllUserData();
 	      this._executePromiseCb('logoutUser', request);
 	
@@ -1472,7 +1581,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = AuthConnector;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1483,7 +1592,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _AuthConnector = __webpack_require__(6);
+	var _AuthConnector = __webpack_require__(7);
 	
 	var _AuthConnector2 = _interopRequireDefault(_AuthConnector);
 	
@@ -1684,6 +1793,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this._retryStatus === 'Pending') {
 	        return this._retryRequest;
 	      }
+	
+	      this._retryStatus = 'Pending';
 	
 	      var refreshTokenPromise = this.authConnector.refreshUserToken();
 	      this._retryRequest = refreshTokenPromise.then(function (tokenObject) {

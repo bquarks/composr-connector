@@ -35,9 +35,9 @@
         <span class='fraction'>1/7</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">22.22% </span>
+        <span class="strong">21.74% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>10/45</span>
+        <span class='fraction'>10/46</span>
       </div>
       <div class='fl pad1y'>
         <span class="strong">7 statements, 5 branches</span>
@@ -228,7 +228,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -294,53 +294,53 @@ const VERSION = '1.0.0';
  * @return {String} jwt                             JWT string
  */
 export <span class="fstat-no" title="function not covered" >function generate(claims, secret, alg) {</span>
-<span class="cstat-no" title="statement not covered" >  claims = claims || {};</span>
-<span class="cstat-no" title="statement not covered" >  claims.exp = claims.exp || _generateExp();</span>
+<span class="cstat-no" title="statement not covered" >  c</span>laims = claims || {};
+<span class="cstat-no" title="statement not covered" >  c</span>laims.exp = claims.exp || _generateExp();
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  i</span>f (!claims.iss) {
-<span class="cstat-no" title="statement not covered" >    throw new Error('jwt:undefined:iss');</span>
+<span class="cstat-no" title="statement not covered" >  if (!claims.iss) {</span>
+<span class="cstat-no" title="statement not covered" >    t</span>hrow new Error('jwt:undefined:iss');
   }
-<span class="cstat-no" title="statement not covered" >  i</span>f (!claims.aud) {
-<span class="cstat-no" title="statement not covered" >    throw new Error('jwt:undefined:aud');</span>
+<span class="cstat-no" title="statement not covered" >  if (!claims.aud) {</span>
+<span class="cstat-no" title="statement not covered" >    t</span>hrow new Error('jwt:undefined:aud');
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return _generate(claims, secret, alg);</span>
+<span class="cstat-no" title="statement not covered" >  r</span>eturn _generate(claims, secret, alg);
 }
 &nbsp;
 export <span class="fstat-no" title="function not covered" >function decode(assertion) {</span>
-<span class="cstat-no" title="statement not covered" >  var decoded = assertion.split('.');</span>
+<span class="cstat-no" title="statement not covered" >  v</span>ar decoded = assertion.split('.');
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    decoded[0] = JSON.parse(atob(decoded[0]));</span>
+<span class="cstat-no" title="statement not covered" >    d</span>ecoded[0] = JSON.parse(atob(decoded[0]));
   } catch (e) {
-<span class="cstat-no" title="statement not covered" >    decoded[0] = false;</span>
+<span class="cstat-no" title="statement not covered" >    d</span>ecoded[0] = false;
   }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    decoded[1] = JSON.parse(atob(decoded[1]));</span>
+<span class="cstat-no" title="statement not covered" >    d</span>ecoded[1] = JSON.parse(atob(decoded[1]));
   } catch (e) {
-<span class="cstat-no" title="statement not covered" >    decoded[1] = false;</span>
+<span class="cstat-no" title="statement not covered" >    d</span>ecoded[1] = false;
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  i</span>f (!decoded[0] &amp;&amp; !decoded[1]) {
-<span class="cstat-no" title="statement not covered" >    throw new Error('corbel:jwt:decode:invalid_assertion');</span>
+<span class="cstat-no" title="statement not covered" >  if (!decoded[0] &amp;&amp; !decoded[1]) {</span>
+<span class="cstat-no" title="statement not covered" >    t</span>hrow new Error('corbel:jwt:decode:invalid_assertion');
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  decoded[0] = decoded[0] || {};</span>
-<span class="cstat-no" title="statement not covered" >  decoded[1] = decoded[1] || {};</span>
+<span class="cstat-no" title="statement not covered" >  d</span>ecoded[0] = decoded[0] || {};
+<span class="cstat-no" title="statement not covered" >  d</span>ecoded[1] = decoded[1] || {};
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  Object.keys(decoded[1]).forEach(<span class="fstat-no" title="function not covered" >function(key) {</span></span>
-<span class="cstat-no" title="statement not covered" >    decoded[0][key] = decoded[1][key];</span>
+<span class="cstat-no" title="statement not covered" >  O</span>bject.keys(decoded[1]).forEach(<span class="fstat-no" title="function not covered" >function(key) {</span>
+<span class="cstat-no" title="statement not covered" >    d</span>ecoded[0][key] = decoded[1][key];
   });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return decoded[0];</span>
+<span class="cstat-no" title="statement not covered" >  r</span>eturn decoded[0];
 }
 &nbsp;
-<span class="fstat-no" title="function not covered" >function _generate(claims, secret, alg) <span class="cstat-no" title="statement not covered" >{</span></span>
-<span class="cstat-no" title="statement not covered" >  alg = a</span>lg || ALGORITHM;
+<span class="fstat-no" title="function not covered" >function _generate(claims, secret, alg) {</span>
+<span class="cstat-no" title="statement not covered" >  a</span>lg = alg || ALGORITHM;
 &nbsp;
   // Ensure claims specific order
-  var claimsKeys = [
+<span class="cstat-no" title="statement not covered" >  v</span>ar claimsKeys = [
     'iss',
     'aud',
     'exp',
@@ -356,32 +356,32 @@ export <span class="fstat-no" title="function not covered" >function decode(asse
     'device_id'
   ];
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  var finalClaims = {};</span>
-<span class="cstat-no" title="statement not covered" >  claimsKeys.forEach(<span class="fstat-no" title="function not covered" >function(key) {</span></span>
-<span class="cstat-no" title="statement not covered" >    i</span>f (claims[key]) {
-<span class="cstat-no" title="statement not covered" >      finalClaims[key] = claims[key];</span>
+<span class="cstat-no" title="statement not covered" >  v</span>ar finalClaims = {};
+<span class="cstat-no" title="statement not covered" >  c</span>laimsKeys.forEach(<span class="fstat-no" title="function not covered" >function(key) {</span>
+<span class="cstat-no" title="statement not covered" >    if (claims[key]) {</span>
+<span class="cstat-no" title="statement not covered" >      f</span>inalClaims[key] = claims[key];
     }
   });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  Object.assign(finalClaims, claims);</span>
+<span class="cstat-no" title="statement not covered" >  O</span>bject.assign(finalClaims, claims);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  i</span>f (Array.isArray(finalClaims.scope)) {
-<span class="cstat-no" title="statement not covered" >    finalClaims.scope = finalClaims.scope.join(' ');</span>
+<span class="cstat-no" title="statement not covered" >  if (Array.isArray(finalClaims.scope)) {</span>
+<span class="cstat-no" title="statement not covered" >    f</span>inalClaims.scope = finalClaims.scope.join(' ');
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  var bAlg = cryptography.rstr2b64(cryptography.str2rstr_utf8(JSON.stringify({</span>
+<span class="cstat-no" title="statement not covered" >  v</span>ar bAlg = cryptography.rstr2b64(cryptography.str2rstr_utf8(JSON.stringify({
       typ: TYP,
       alg: alg
     })));
-<span class="cstat-no" title="statement not covered" >  var bClaims = cryptography.rstr2b64(cryptography.str2rstr_utf8(JSON.stringify(finalClaims)));</span>
-<span class="cstat-no" title="statement not covered" >  var segment = bAlg + '.' + bClaims;</span>
-<span class="cstat-no" title="statement not covered" >  var assertion = cryptography.b64tob64u(cryptography.b64_hmac_sha256(secret, segment));</span>
+<span class="cstat-no" title="statement not covered" >  v</span>ar bClaims = cryptography.rstr2b64(cryptography.str2rstr_utf8(JSON.stringify(finalClaims)));
+<span class="cstat-no" title="statement not covered" >  v</span>ar segment = bAlg + '.' + bClaims;
+<span class="cstat-no" title="statement not covered" >  v</span>ar assertion = cryptography.b64tob64u(cryptography.b64_hmac_sha256(secret, segment));
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return segment + '.' + assertion;</span>
+<span class="cstat-no" title="statement not covered" >  r</span>eturn segment + '.' + assertion;
 }
 &nbsp;
 <span class="fstat-no" title="function not covered" >function _generateExp() {</span>
-<span class="cstat-no" title="statement not covered" >  return Math.round((new Date().getTime() / 1000)) + EXPIRATION;</span>
+<span class="cstat-no" title="statement not covered" >  r</span>eturn Math.round((new Date().getTime() / 1000)) + EXPIRATION;
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -389,7 +389,7 @@ export <span class="fstat-no" title="function not covered" >function decode(asse
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Apr 21 2016 17:49:57 GMT+0200 (CEST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Aug 08 2016 14:29:33 GMT+0200 (CEST)
 </div>
 </div>
 <script src="../../prettify.js"></script>
