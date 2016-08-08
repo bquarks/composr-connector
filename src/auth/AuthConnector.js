@@ -237,9 +237,7 @@ class AuthConnector {
       remember,
       headersExtension,
       authDataExtension
-    });
-
-    request
+    })
     .then(this._parseTokenObject)
     .then(res => {
       res.authOptions = this.options;
