@@ -76,22 +76,22 @@ class AuthPersist {
    * Removes auth data from localStorage
    */
   _removeLocalStorage() {
-    this.localStorage.removeItem('refreshToken');
-    this.localStorage.removeItem('accessToken');
-    this.localStorage.removeItem('expiresAt');
-    this.localStorage.removeItem('remember');
-    this.localStorage.removeItem('authOptions');
+    var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+
+    for (let i in items) {
+      this.localStorage.removeItem(items[i]);
+    }
   }
 
   /**
    * Removes auth data from sessionStorage
    */
   _removeSessionStorage() {
-    this.sessionStorage.removeItem('refreshToken');
-    this.sessionStorage.removeItem('accessToken');
-    this.sessionStorage.removeItem('expiresAt');
-    this.sessionStorage.removeItem('remember');
-    this.sessionStorage.removeItem('authOptions');
+    var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+
+    for (let i in items) {
+      this.sessionStorage.removeItem(items[i]);
+    }
   }
 
   _removeUserCookie(cookieName) {
