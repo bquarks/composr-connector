@@ -48,6 +48,7 @@ class AuthPersist {
     if (data.authOptions) {
       this.localStorage.authOptions = JSON.stringify(data.authOptions);
     }
+    this.localStorage.scopes = data.scopes;
     this.localStorage.accessToken = data.accessToken;
     this.localStorage.expiresAt = data.expiresAt;
 
@@ -66,6 +67,7 @@ class AuthPersist {
     if (data.authOptions) {
       this.sessionStorage.authOptions = JSON.stringify(data.authOptions);
     }
+    this.sessionStorage.scopes = data.scopes;
     this.sessionStorage.refreshToken = data.refreshToken;
     this.sessionStorage.accessToken = data.accessToken;
     this.sessionStorage.expiresAt = data.expiresAt;
@@ -76,7 +78,7 @@ class AuthPersist {
    * Removes auth data from localStorage
    */
   _removeLocalStorage() {
-    var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+    var items = ['refreshToken', 'accessToken', 'expiresAt', 'scopes', 'remember', 'authOptions'];
 
     for (let i in items) {
       this.localStorage.removeItem(items[i]);
@@ -87,7 +89,7 @@ class AuthPersist {
    * Removes auth data from sessionStorage
    */
   _removeSessionStorage() {
-    var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+    var items = ['refreshToken', 'accessToken', 'expiresAt', 'scopes', 'remember', 'authOptions'];
 
     for (let i in items) {
       this.sessionStorage.removeItem(items[i]);
@@ -150,6 +152,8 @@ class AuthPersist {
   _getUserTokens() {
     const refreshToken = this.sessionStorage.refreshToken ||
       this.localStorage.refreshToken;
+    const scopes = this.sessionStorage.scopes ||
+      this.localStorage.scopes;
     const {
       accessToken,
       expiresAt
@@ -157,7 +161,8 @@ class AuthPersist {
     const userTokens = {
       refreshToken,
       accessToken,
-      expiresAt
+      expiresAt,
+      scopes
     };
 
     return userTokens;
@@ -204,6 +209,7 @@ class AuthPersist {
       accessToken,
       refreshToken,
       expiresAt,
+      scopes,
       authOptions
     } = tokenObject;
 
@@ -220,7 +226,8 @@ class AuthPersist {
     this.tokens.user = {
       accessToken,
       refreshToken,
-      expiresAt
+      expiresAt,
+      scopes
     };
 
     this.tokens.authOptions = authOptions;
