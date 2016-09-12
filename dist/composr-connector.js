@@ -936,6 +936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (data.authOptions) {
 	        this.localStorage.authOptions = JSON.stringify(data.authOptions);
 	      }
+	      this.localStorage.scopes = data.scopes;
 	      this.localStorage.accessToken = data.accessToken;
 	      this.localStorage.expiresAt = data.expiresAt;
 	    }
@@ -956,6 +957,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (data.authOptions) {
 	        this.sessionStorage.authOptions = JSON.stringify(data.authOptions);
 	      }
+	      this.sessionStorage.scopes = data.scopes;
 	      this.sessionStorage.refreshToken = data.refreshToken;
 	      this.sessionStorage.accessToken = data.accessToken;
 	      this.sessionStorage.expiresAt = data.expiresAt;
@@ -968,7 +970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_removeLocalStorage',
 	    value: function _removeLocalStorage() {
-	      var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+	      var items = ['refreshToken', 'accessToken', 'expiresAt', 'scopes', 'remember', 'authOptions'];
 	
 	      for (var i in items) {
 	        this.localStorage.removeItem(items[i]);
@@ -982,7 +984,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: '_removeSessionStorage',
 	    value: function _removeSessionStorage() {
-	      var items = ['refreshToken', 'accessToken', 'expiresAt', 'remember', 'authOptions'];
+	      var items = ['refreshToken', 'accessToken', 'expiresAt', 'scopes', 'remember', 'authOptions'];
 	
 	      for (var i in items) {
 	        this.sessionStorage.removeItem(items[i]);
@@ -1048,6 +1050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: '_getUserTokens',
 	    value: function _getUserTokens() {
 	      var refreshToken = this.sessionStorage.refreshToken || this.localStorage.refreshToken;
+	      var scopes = this.sessionStorage.scopes || this.localStorage.scopes;
 	
 	      var _getUserAccessToken2 = this._getUserAccessToken();
 	
@@ -1057,7 +1060,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var userTokens = {
 	        refreshToken: refreshToken,
 	        accessToken: accessToken,
-	        expiresAt: expiresAt
+	        expiresAt: expiresAt,
+	        scopes: scopes
 	      };
 	
 	      return userTokens;
@@ -1110,6 +1114,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var accessToken = tokenObject.accessToken;
 	      var refreshToken = tokenObject.refreshToken;
 	      var expiresAt = tokenObject.expiresAt;
+	      var scopes = tokenObject.scopes;
 	      var authOptions = tokenObject.authOptions;
 	
 	
@@ -1125,7 +1130,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.tokens.user = {
 	        accessToken: accessToken,
 	        refreshToken: refreshToken,
-	        expiresAt: expiresAt
+	        expiresAt: expiresAt,
+	        scopes: scopes
 	      };
 	
 	      this.tokens.authOptions = authOptions;

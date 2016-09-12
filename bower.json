@@ -1,6 +1,6 @@
 {
   "name": "composr-connector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A connector for Composr middleware",
   "main": "composr-connector.js",
   "scripts": {
